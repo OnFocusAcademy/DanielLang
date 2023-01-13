@@ -1,6 +1,8 @@
+const { Input } = require("./Input");
+
 /**
  * Class holding the functions that tokenize an input string
- * @property {String} input
+ * @property {Input} input
  */
 exports.Lexer = class Lexer {
   /**
@@ -8,11 +10,6 @@ exports.Lexer = class Lexer {
    * @param {String} input program to lex
    */
   constructor(input) {
-    this.input = input;
-    this.pos = 0;
-  }
-
-  eof() {
-    this.pos >= this.input.length;
+    this.input = new Input(input);
   }
 };
