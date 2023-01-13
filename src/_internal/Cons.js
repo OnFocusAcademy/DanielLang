@@ -17,4 +17,4 @@ class Cons {
   }
 }
 
-module.exports = Cons;
+exports.Cons = Cons;

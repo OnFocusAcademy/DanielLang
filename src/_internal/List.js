@@ -1,4 +1,4 @@
-const Cons = require("./Cons.js");
+const { Cons } = require("./Cons.js");
 
 /**
  * Singly linked list class to use as AST
