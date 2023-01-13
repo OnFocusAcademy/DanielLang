@@ -1,4 +1,4 @@
-import { Cons, cons } from "./Cons";
+import { Cons, cons } from "./Cons.js";
 
 /**
  * Singly linked list class to use as AST
@@ -22,7 +22,7 @@ export class List {
   append(value) {
     const node = cons(value, null);
 
-    if (!head) {
+    if (!this.head) {
       this.head = node;
       this.end = node;
     } else {
@@ -32,6 +32,33 @@ export class List {
     }
 
     return this;
+  }
+
+  /**
+   * Get the value at i in the current List
+   * @param {Number} i index
+   */
+  get(i) {}
+
+  /**
+   * Cons a value onto the head of the list
+   * @param {Any} value
+   */
+  prepend(value) {
+    const head = this.head;
+    const node = cons(value, head);
+    this.head = node;
+
+    return this;
+  }
+
+  *[Symbol.iterator]() {
+    let head = this.head;
+
+    while (head) {
+      yield head.head;
+      head = head.tail;
+    }
   }
 }
 
@@ -44,3 +71,10 @@ export const list = (...args) => {
 
   return l;
 };
+
+let l = list(1, 2, 3, 4);
+console.log(l);
+
+for (let n of l) {
+  console.log(n);
+}
