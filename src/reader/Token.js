@@ -2,16 +2,19 @@
  * Represents a single lexeme
  * @property {String} type
  * @property {String} value
+ * @property {Number} pos
  */
 class Token {
   /**
    * Constructor for Token class
    * @param {String} type
    * @param {String} value
+   * @param {Number} pos
    */
-  constructor(type, value) {
+  constructor(type, value, pos) {
     this.type = type;
     this.value = value;
+    this.pos = pos;
   }
 
   /**
@@ -28,8 +31,9 @@ class Token {
  * Constructs a new Token
  * @param {String} type
  * @param {String} value
+ * @param {Number} pos
  * @returns {Token}
  */
-const token = (type, value) => new Token(type, value);
+const token = (type, value, pos) => new Token(type, value, pos);
 
 module.exports = { Token, token };
