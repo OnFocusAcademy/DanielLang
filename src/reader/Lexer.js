@@ -9,5 +9,10 @@ exports.Lexer = class Lexer {
    */
   constructor(input) {
     this.input = input;
+    this.pos = 0;
+  }
+
+  eof() {
+    this.pos >= this.input.length;
   }
 };
