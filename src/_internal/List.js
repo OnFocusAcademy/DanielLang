@@ -7,11 +7,13 @@ import { cons } from "./Cons.js";
  *
  * @property {Any} head
  * @property {Cons | null} end
+ * @property {Number} length
  */
 export class List {
   constructor() {
     this.head = null;
     this.end = null;
+    this.length = 0;
   }
 
   /**
@@ -31,7 +33,24 @@ export class List {
       this.end = node;
     }
 
+    this.length++;
     return this;
+  }
+
+  /**
+   * Return a new list with every element in the current list that satisfies fn
+   * @param {Function} fn filter predicate
+   */
+  filter(fn) {
+    let filtered = new List();
+
+    for (let value of this) {
+      if (fn(value)) {
+        filtered.append(value);
+      }
+    }
+
+    return this.length ? filtered : null;
   }
 
   /**
@@ -73,6 +92,20 @@ export class List {
   }
 
   /**
+   * Return a new list with each element of the current list transformed by fn
+   * @param {Function} fn mapper function
+   */
+  map(fn) {
+    let mapped = new List();
+
+    for (let value of this) {
+      mapped.append(fn(value));
+    }
+
+    return this.length ? mapped : null;
+  }
+
+  /**
    * Cons a value onto the head of the list
    * @param {Any} value
    */
@@ -81,7 +114,23 @@ export class List {
     const node = cons(value, head);
     this.head = node;
 
+    this.length++;
     return this;
+  }
+
+  /**
+   * Apply a reducer function to the current list and return the final value
+   * @param {Function} fn reducer
+   * @param {Any} init initial accumulator value
+   */
+  reduce(fn, init) {
+    let accum = init;
+
+    for (let value of this) {
+      accum = fn(accum, value);
+    }
+
+    return accum;
   }
 
   *[Symbol.iterator]() {
