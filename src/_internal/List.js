@@ -168,3 +168,9 @@ const list = (...args) => {
 
   return l;
 };
+
+module.exports = {
+  List,
+  cons,
+  list,
+};
