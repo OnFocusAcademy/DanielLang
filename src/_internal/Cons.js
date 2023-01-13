@@ -5,7 +5,7 @@
  * @property {Any} head
  * @property {Any} tail
  */
-export class Cons {
+class Cons {
   /**
    *
    * @param {Any} head
@@ -16,3 +16,5 @@ export class Cons {
     this.tail = tail;
   }
 }
+
+module.exports = Cons;

@@ -3,7 +3,6 @@
   "description": "A Lisp-like language with macros for learning about programming languages and interpreters.",
   "version": "1.0.0",
   "main": "index.js",
-  "type":"module",
   "devDependencies": {
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.6.0",

@@ -1,4 +1,4 @@
-import { Cons } from "./Cons.js";
+const Cons = require("./Cons.js");
 
 /**
  * Singly linked list class to use as AST
@@ -9,7 +9,7 @@ import { Cons } from "./Cons.js";
  * @property {Cons | null} end
  * @property {Number} length
  */
-export class List {
+class List {
   constructor() {
     this.head = null;
     this.end = null;
@@ -149,7 +149,7 @@ export class List {
  * @param {Any} tail
  * @returns {Cons}
  */
-export const cons = (head, tail) => {
+const cons = (head, tail) => {
   if (tail instanceof List) {
     return list(head, ...tail);
   } else if (tail == null) {
@@ -159,7 +159,7 @@ export const cons = (head, tail) => {
   return new Cons(head, tail);
 };
 
-export const list = (...args) => {
+const list = (...args) => {
   const l = new List();
 
   for (let arg of args) {
