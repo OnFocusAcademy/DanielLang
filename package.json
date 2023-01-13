@@ -1,8 +1,27 @@
 {
-  "dependencies": {
+  "name": "@onfocusacademy/daniellang",
+  "description": "A Lisp-like language with macros for learning about programming languages and interpreters.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type":"module",
+  "devDependencies": {
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.2"
-  }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OnFocusAcademy/DanielLang.git"
+  },
+  "keywords": [],
+  "author": "Jason Barr <jason@jasonsbarr.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OnFocusAcademy/DanielLang/issues"
+  },
+  "homepage": "https://github.com/OnFocusAcademy/DanielLang#readme"
 }
