@@ -1,4 +1,4 @@
-import { Cons, cons } from "./Cons.js";
+import { cons } from "./Cons.js";
 
 /**
  * Singly linked list class to use as AST
@@ -38,7 +38,39 @@ export class List {
    * Get the value at i in the current List
    * @param {Number} i index
    */
-  get(i) {}
+  get(i) {
+    let idx = 0;
+
+    for (let value of this) {
+      if (i === idx) {
+        return value;
+      }
+
+      idx++;
+    }
+
+    throw new Error(
+      `Index out of bounds error: list does not contain ${i} elements`
+    );
+  }
+
+  /**
+   * Check if list has an element at index i
+   * @param {Number} i
+   * @returns {Boolean}
+   */
+  has(i) {
+    let idx = 0;
+
+    // eslint-disable-next-line
+    for (let _ of this) {
+      if (i === idx) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   /**
    * Cons a value onto the head of the list
