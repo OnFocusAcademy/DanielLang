@@ -16,11 +16,3 @@ export class Cons {
     this.tail = tail;
   }
 }
-
-/**
- *
- * @param {Any} head
- * @param {Any} tail
- * @returns {Cons}
- */
-export const cons = (head, tail) => new Cons(head, tail);

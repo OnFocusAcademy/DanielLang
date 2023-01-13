@@ -1,4 +1,4 @@
-import { cons } from "./Cons.js";
+import { Cons } from "./Cons.js";
 
 /**
  * Singly linked list class to use as AST
@@ -143,6 +143,22 @@ export class List {
   }
 }
 
+/**
+ *
+ * @param {Any} head
+ * @param {Any} tail
+ * @returns {Cons}
+ */
+export const cons = (head, tail) => {
+  if (tail instanceof List) {
+    return list(head, ...tail);
+  } else if (tail == null) {
+    return list(head);
+  }
+
+  return new Cons(head, tail);
+};
+
 export const list = (...args) => {
   const l = new List();
 
@@ -152,10 +168,3 @@ export const list = (...args) => {
 
   return l;
 };
-
-let l = list(1, 2, 3, 4);
-console.log(l);
-
-for (let n of l) {
-  console.log(n);
-}
