@@ -9,4 +9,4 @@ This implementation is a simple tree-walking interpreter. It uses linked lists a
 Daniel is named after two people:
 
 - My son, Daniel Barr, who is the joy of my life
-- Programming languages professor and researcher Daniel P. Friedman, author of the groundbreaking textbook _Essentials of Programming Languages_
+- Programming languages professor and researcher Daniel P. Friedman, author of the groundbreaking textbook _Essentials of Programming Languages_ and many other works
