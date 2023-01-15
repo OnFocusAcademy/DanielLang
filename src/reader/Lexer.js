@@ -157,11 +157,29 @@ exports.Lexer = class Lexer {
 
         if (numberType === "hexadecimal") {
           num += this.input.readWhile(isHexDigit);
+
+          if (isDigit(this.input.peek())) {
+            throw new Error(
+              `Invalid character ${this.input.peek()} in hexadecimal integer literal`
+            );
+          }
         } else if (numberType === "octal") {
           num += this.input.readWhile(isOctDigit);
+
+          if (isDigit(this.input.peek())) {
+            throw new Error(
+              `Invalid character ${this.input.peek()} in octal integer literal`
+            );
+          }
         } else {
           // must be binary
           num += this.input.readWhile(isBinDigit);
+
+          if (isDigit(this.input.peek())) {
+            throw new Error(
+              `Invalid character ${this.input.peek()} in binary integer literal`
+            );
+          }
         }
 
         if (isDot(this.input.peek())) {
