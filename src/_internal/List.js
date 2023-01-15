@@ -50,7 +50,7 @@ class List {
       }
     }
 
-    return this.length ? filtered : null;
+    return filtered.length ? filtered : null;
   }
 
   /**
@@ -102,7 +102,7 @@ class List {
       mapped.append(fn(value));
     }
 
-    return this.length ? mapped : null;
+    return mapped.length ? mapped : null;
   }
 
   /**
