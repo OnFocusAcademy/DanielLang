@@ -24,6 +24,14 @@ exports.Input = class Input {
   }
 
   /**
+   * Get the character at the current pos + n of the input string
+   * @param {Number} n number of positions to look ahead
+   */
+  lookahead(n = 1) {
+    return this.input[this.pos + n];
+  }
+
+  /**
    * Get the character at the current position and advance the pointer by one
    * @returns {String}
    */
@@ -51,5 +59,12 @@ exports.Input = class Input {
     }
 
     return result;
+  }
+
+  /**
+   * Skip the current char without returning it
+   */
+  skip() {
+    this.pos++;
   }
 };
