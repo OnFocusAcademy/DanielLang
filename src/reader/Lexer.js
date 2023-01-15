@@ -152,6 +152,9 @@ exports.Lexer = class Lexer {
       }
 
       if (numberType !== "decimal") {
+        // consume the int type indicator
+        num += this.input.next();
+
         if (numberType === "hexadecimal") {
           num += this.input.readWhile(isHexDigit);
         } else if (numberType === "octal") {
