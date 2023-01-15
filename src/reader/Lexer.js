@@ -170,7 +170,7 @@ exports.Lexer = class Lexer {
         num += this.input.readWhile(isDigit);
       }
     } else {
-      num += this.readWhile(isDigit);
+      num += this.input.readWhile(isDigit);
     }
 
     if (isDot(this.input.peek())) {
