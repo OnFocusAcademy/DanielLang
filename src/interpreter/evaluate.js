@@ -1,15 +1,18 @@
 // eslint-disable-next-line
 const { isList, List } = require("../_internal/List");
+// eslint-disable-next-line
+const { Env } = require("./Env");
 const { Forms } = require("./forms");
 const { isKeyword } = require("./utils");
 /**
  * Evaluate an AST as code
  * @param {import("../reader/read").AST} ast
+ * @param {Env} env
  */
-const evaluate = (ast) => {
+const evaluate = (ast, env) => {
   if (isList(ast)) {
     // evaluate form
-    return evalList(ast);
+    return evalList(ast, env);
   }
 
   switch (typeof ast) {
@@ -22,7 +25,7 @@ const evaluate = (ast) => {
       if (isKeyword(ast)) {
         return ast;
       }
-      return evalSymbol(ast);
+      return evalSymbol(ast, env);
     default:
       throw new Error(`Unknown AST ${ast}`);
   }
@@ -49,17 +52,24 @@ const evalList = (ast) => {
  * @param {List} ast
  * @returns {import("../reader/read").AST|Object}
  */
-const evalDoBlock = (ast) => {
+const evalDoBlock = (ast, env) => {
   let value;
   const [, exprs] = ast;
 
   for (let expr of exprs) {
-    value = evaluate(expr);
+    value = evaluate(expr, env);
   }
 
   return value;
 };
 
-const evalSymbol = () => {};
+/**
+ * Looks up a symbol in the current environment and returns its value
+ * @param {Symbol} ast
+ * @param {Env} env
+ */
+const evalSymbol = (ast, env) => {
+  return env.get(ast);
+};
 
 exports.evaluate = evaluate;
