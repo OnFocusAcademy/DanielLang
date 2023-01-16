@@ -141,6 +141,10 @@ class List {
       head = head.tail;
     }
   }
+
+  toString() {
+    return `(${[...this].map((n) => String(n)).join(" ")})`;
+  }
 }
 
 /**
