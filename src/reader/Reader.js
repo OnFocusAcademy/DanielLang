@@ -5,6 +5,7 @@ const { Token } = require("./Token");
  * Manages the reader state after the input is tokenized
  * @property {Token[]} tokens
  * @property {Number} pos
+ * @property {Number} length
  */
 exports.Reader = class Reader {
   /**
@@ -14,6 +15,15 @@ exports.Reader = class Reader {
   constructor(tokens) {
     this.tokens = tokens;
     this.pos = 0;
+    this.length = tokens.length;
+  }
+
+  /**
+   * Check if we've consumed the entire token stream
+   * @returns {Boolean}
+   */
+  eof() {
+    return this.pos >= this.length;
   }
 
   /**
