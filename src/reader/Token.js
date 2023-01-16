@@ -1,13 +1,16 @@
+// eslint-disable-next-line
+const { TokenTypes } = require("./TokenTypes");
+
 /**
  * Represents a single lexeme
- * @property {String} type
+ * @property {TokenTypes} type
  * @property {String} value
  * @property {Number} pos
  */
 class Token {
   /**
    * Constructor for Token class
-   * @param {String} type
+   * @param {TokenTypes} type
    * @param {String} value
    * @param {Number} pos
    */
@@ -29,7 +32,7 @@ class Token {
 
 /**
  * Constructs a new Token
- * @param {String} type
+ * @param {TokenTypes} type
  * @param {String} value
  * @param {Number} pos
  * @returns {Token}
