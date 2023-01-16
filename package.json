@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/OnFocusAcademy/DanielLang#readme",
   "dependencies": {
+    "chalk": "^4.1.2",
     "readline-sync": "^1.4.10"
   }
 }
