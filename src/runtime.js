@@ -32,4 +32,19 @@ class Module {
  */
 const makeModule = (name, provides) => new Module(name, provides);
 
-module.exports = { makeModule };
+/**
+ * Convert a JS function into a Daniel function
+ * @param {Function} func
+ * @param {Object} kwargs
+ * @param {String} kwargs.name
+ */
+const makeFunction = (func, { name = func.name ?? "lambda" } = {}) => {
+  func.__name__ = name;
+  func.daniel = true;
+
+  func.toString = () => `Function ${func.__name__}`;
+
+  return func;
+};
+
+module.exports = { makeModule, makeFunction };
