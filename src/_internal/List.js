@@ -1,4 +1,4 @@
-const { printList } = require("../printer/print.js");
+const { printList } = require("../printer/print");
 const { Cons } = require("./Cons.js");
 
 /**
@@ -102,6 +102,13 @@ class List {
    */
   head() {
     return this.first();
+  }
+
+  /**
+   * Helper method to indicate this is a list
+   */
+  isList() {
+    return true;
   }
 
   /**

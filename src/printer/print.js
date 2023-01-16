@@ -1,6 +1,4 @@
 const { isKeyword } = require("../interpreter/utils");
-// eslint-disable-next-line
-const { List, isList } = require("../_internal/List");
 
 /**
  * Print the result of any expression
@@ -8,7 +6,7 @@ const { List, isList } = require("../_internal/List");
  * @returns {String}
  */
 const print = (obj) => {
-  if (isList(obj)) {
+  if (obj?.isList && obj.isList()) {
     return printList(obj);
   }
 
