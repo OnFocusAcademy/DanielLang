@@ -1,6 +1,12 @@
 const { isKeyword } = require("../interpreter/helpers");
-const { isList } = require("../_internal/List");
+// eslint-disable-next-line
+const { List, isList } = require("../_internal/List");
 
+/**
+ * Print the result of any expression
+ * @param {Any} obj
+ * @returns {String}
+ */
 const print = (obj) => {
   if (isList(obj)) {
     return printList(obj);
@@ -38,13 +44,28 @@ const print = (obj) => {
   throw new Error(`Print not implemented for ${obj}`);
 };
 
+/**
+ * Print a list
+ * @param {List} list
+ * @returns {String}
+ */
 const printList = (list) => `(${[...list].map(print).join(" ")})`;
 
+/**
+ * Print a map
+ * @param {Map} map
+ * @returns {String}
+ */
 const printMap = (map) =>
   `{${[...map.entries()]
     .map((e) => print(e[0]) + " => " + print(e[1]))
     .join(" ")}}`;
 
+/**
+ * Print a vector (array)
+ * @param {Array} vec
+ * @returns {String}
+ */
 const printVector = (vec) => `[${vec.map((v) => print(v)).join(" ")}]`;
 
 module.exports = { print, printList };
