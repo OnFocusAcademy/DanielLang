@@ -142,7 +142,7 @@ const makeLambda = (ast, env, name = "lambda") => {
   const [args, body] = ast;
   const lambda = (...params) => {
     let scope = env.extend(name);
-    args.forEach((arg, i) => scope.define(arg, params[i]));
+    args.forEach((arg, i) => scope.define(arg, evaluate(params[i], env)));
 
     return evaluate(body, scope);
   };

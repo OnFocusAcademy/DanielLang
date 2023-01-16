@@ -62,6 +62,17 @@ class List {
   }
 
   /**
+   * Applies a function to every element of the list
+   * @param {Function} fn
+   */
+  forEach(fn) {
+    let i = 0;
+    for (let value of this) {
+      fn(value, i++);
+    }
+  }
+
+  /**
    * Get the value at i in the current List
    * @param {Number} i index
    */
