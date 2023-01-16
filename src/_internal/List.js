@@ -58,7 +58,7 @@ class List {
    * Get the first element in the list
    */
   first() {
-    return this.head?.value ?? null;
+    return this.head?.head ?? null;
   }
 
   /**

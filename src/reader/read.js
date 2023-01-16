@@ -144,13 +144,13 @@ const readMap = (list) => {
  */
 const read = (input) => {
   const reader = new Reader(tokenize(input));
-  const ast = new List();
+  const ast = list(Symbol.for("do"));
 
   while (!reader.eof()) {
     ast.append(readForm(reader));
   }
 
-  return list(Symbol.for("do"), ast);
+  return ast;
 };
 
 exports.read = read;

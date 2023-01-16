@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 const { makeFunction } = require("../runtime");
 // eslint-disable-next-line
-const { isList, List } = require("../_internal/List");
+const { isList, List, list, cons } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
@@ -60,7 +60,7 @@ const evalList = (ast, env) => {
  */
 const evalDoBlock = (ast, env) => {
   let value;
-  const [, exprs] = ast;
+  const exprs = ast.tail();
 
   for (let expr of exprs) {
     value = evaluate(expr, env);
@@ -105,6 +105,11 @@ const evalCall = (ast, env) => {
  */
 const evalDefine = (ast, env) => {
   const [, name, value] = ast;
+
+  if (isList(name)) {
+    return evalFuncDef(ast, env);
+  }
+
   env.define(name, evaluate(value, env));
 };
 
@@ -148,6 +153,28 @@ const makeLambda = (ast, env, name = "lambda") => {
   };
 
   return makeFunction(lambda, { name });
+};
+
+/**
+ * Evaluates a function definition using define
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalFuncDef = (ast, env) => {
+  const [, header, body] = ast;
+  const name = header.first();
+  const args = header.tail();
+  let blockBody = list(Symbol.for("do")).append(body);
+
+  if (typeof name !== "symbol") {
+    throw new Error(
+      `Function definition name must be a symbol; ${typeof name} given`
+    );
+  }
+
+  const fn = makeLambda(list(args, blockBody), env, Symbol.keyFor(name));
+
+  env.define(name, fn);
 };
 
 exports.evaluate = evaluate;
