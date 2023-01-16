@@ -1,4 +1,6 @@
 // eslint-disable-next-line
+const { makeFunction } = require("../runtime");
+// eslint-disable-next-line
 const { isList, List } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
@@ -34,7 +36,6 @@ const evaluate = (ast, env) => {
 /**
  *
  * @param {List} ast
- * @returns {import("../reader/read").AST|Object}
  */
 const evalList = (ast, env) => {
   const [fst] = ast;
@@ -46,6 +47,8 @@ const evalList = (ast, env) => {
       return evalDefine(ast, env);
     case Forms.If:
       return evalIf(ast, env);
+    case Forms.Lambda:
+      return evalLambda(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -118,6 +121,33 @@ const evalIf = (ast, env) => {
   }
 
   return evaluate(orElse, env);
+};
+
+/**
+ * Evaluate a lambda expression
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalLambda = (ast, env) => {
+  return makeLambda(ast.tail(), env);
+};
+
+/**
+ * Creates a function
+ * @param {List} ast
+ * @param {Env} env
+ * @param {String} [name=lambda]
+ */
+const makeLambda = (ast, env, name = "lambda") => {
+  const [args, body] = ast;
+  const lambda = (...params) => {
+    let scope = env.extend(name);
+    args.forEach((arg, i) => scope.define(arg, params[i]));
+
+    return evaluate(body, scope);
+  };
+
+  return makeFunction(lambda, { name });
 };
 
 exports.evaluate = evaluate;

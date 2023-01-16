@@ -2,6 +2,9 @@ const { getAllOwnKeys } = require("../utils");
 
 /**
  * Environment to pass into interpreter
+ * @property {Env|null} parent
+ * @property {String} name
+ * @property {Map} namespace
  */
 exports.Env = class Env {
   /**
@@ -53,11 +56,11 @@ exports.Env = class Env {
 
   /**
    * Extend the current Environment by defining a child
-   * @param {Env} parent
+   * @param {String} name
    * @returns {Env}
    */
-  extend(parent, name) {
-    return new Env({ parent, name });
+  extend(name) {
+    return new Env({ parent: this, name });
   }
 
   /**
