@@ -1,4 +1,4 @@
-const { List } = require("../_internal/List");
+const { List, list } = require("../_internal/List");
 const { Reader } = require("./Reader");
 const { tokenize } = require("./tokenize");
 const { TokenTypes } = require("./TokenTypes");
@@ -44,10 +44,27 @@ const readForm = (reader) => {
   const token = reader.peek();
 
   switch (token.type) {
+    // reader macros
+    case TokenTypes.Quote:
+      reader.skip();
+      return list(Symbol.for("quote"), readForm(reader));
+    case TokenTypes.QQuote:
+      reader.skip();
+      return list(Symbol.for("quasiquote"), readForm(reader));
+    case TokenTypes.UQuote:
+      reader.skip();
+      return list(Symbol.for("unquote"), readForm(reader));
+    case TokenTypes.SUQuote:
+      reader.skip();
+      return list(Symbol.for("splicing-unquote"), readForm(reader));
+
+    // list ending delimiters without matching opening tokens
     case TokenTypes.RParen:
     case TokenTypes.RBrack:
     case TokenTypes.RBrace:
       throw new Error(`Unexpected ${token.value}`);
+
+    // lists
     case TokenTypes.LParen:
       // eslint-disable-next-line
       const l = readList(reader, TokenTypes.LParen, TokenTypes.RParen);
@@ -56,6 +73,8 @@ const readForm = (reader) => {
       return [...readList(reader, TokenTypes.LBrack, TokenTypes.RBrack)];
     case TokenTypes.LBrace:
       return readMap(readList(reader, TokenTypes.LBrace, TokenTypes.RBrace));
+
+    // atoms
     default:
       return readAtom(reader);
   }

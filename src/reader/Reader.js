@@ -27,6 +27,15 @@ exports.Reader = class Reader {
   }
 
   /**
+   * Gets the nth token from the current pos
+   * @param {Number} n
+   * @returns {Token}
+   */
+  lookahead(n = 1) {
+    return this.tokens[this.pos + n];
+  }
+
+  /**
    * Get the current token
    * @returns {Token}
    */
