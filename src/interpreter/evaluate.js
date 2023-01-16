@@ -43,7 +43,7 @@ const evalList = (ast, env) => {
     case Forms.Do:
       return evalDoBlock(ast, env);
     default:
-      throw new Error(`Unrecognized AST value ${String(fst)}`);
+      return evalCall(ast, env);
   }
 };
 
@@ -70,6 +70,26 @@ const evalDoBlock = (ast, env) => {
  */
 const evalSymbol = (ast, env) => {
   return env.get(ast);
+};
+
+/**
+ * Evaluate a call expression
+ * @param {import("../reader/read").AST} ast
+ * @param {Env} env
+ */
+const evalCall = (ast, env) => {
+  let [fn, ...args] = ast;
+  fn = evaluate(fn, env);
+
+  if (typeof fn !== "function") {
+    throw new Error(
+      `Call expression callee must be a function; ${typeof func} given`
+    );
+  }
+
+  args = args.map((arg) => evaluate(arg, env));
+
+  return fn(...args);
 };
 
 exports.evaluate = evaluate;
