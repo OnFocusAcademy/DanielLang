@@ -5,10 +5,10 @@ exports.isHexDigit = (ch) => /[0-9a-fA-F]/.test(ch);
 exports.isOctDigit = (ch) => /[0-7]/.test(ch);
 exports.isBinDigit = (ch) => /[0-1]/.test(ch);
 // eslint-disable-next-line
-exports.isSymbolStart = (ch) => /[=<>%:\|\?\\\/\*\.\p{L}_\$!\+-]/.test(ch);
+exports.isSymbolStart = (ch) => /[=<>%:\|\?\\\/\*\.\p{L}_\$!\+-]/u.test(ch);
 exports.isSymbolChar = (ch) =>
   // eslint-disable-next-line
-  /[:=@~<>%:&\|\?\\\/\^\*\.&#'\p{L}\p{N}_\$!\+-]/.test(ch);
+  /[:=@~<>%:&\|\?\\\/\^\*\.&#'\p{L}\p{N}_\$!\+-]/u.test(ch);
 exports.isQuote = (ch) => /'/.test(ch);
 exports.isDoubleQuote = (ch) => /"/.test(ch);
 exports.isQQuote = (ch) => /`/.test(ch);
