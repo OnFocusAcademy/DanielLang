@@ -83,6 +83,9 @@ const readList = (reader, start, end) => {
     token = reader.peek();
   }
 
+  // skip the closing token
+  reader.skip();
+
   return ast;
 };
 
@@ -102,5 +105,3 @@ const read = (input) => {
 };
 
 exports.read = read;
-
-console.log(read(`123`));

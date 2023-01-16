@@ -59,8 +59,6 @@ exports.Lexer = class Lexer {
       } else if (ch === "\\") {
         escaped = true;
       } else if (isDoubleQuote(ch)) {
-        // skip ending double quote
-        this.input.skip();
         ended = true;
         break;
       } else if (ch === "\n") {
