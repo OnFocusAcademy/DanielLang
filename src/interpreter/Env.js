@@ -1,3 +1,5 @@
+const { getAllOwnKeys } = require("../utils");
+
 /**
  * Environment to pass into interpreter
  */
@@ -25,12 +27,8 @@ exports.Env = class Env {
   static from(vars, { parent = null, name = "global" } = {}) {
     let env = new Env({ parent, name });
 
-    for (let sym of Object.getOwnPropertySymbols(vars)) {
-      env.define(sym, vars[sym]);
-    }
-
-    for (let [key, value] of Object.entries(vars)) {
-      env.define(Symbol.for(key), value);
+    for (let key of getAllOwnKeys(vars)) {
+      env.set(typeof key === "symbol" ? key : Symbol.for(key), vars[key]);
     }
 
     return env;
