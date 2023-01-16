@@ -152,8 +152,6 @@ class List {
 const cons = (head, tail) => {
   if (tail instanceof List) {
     return list(head, ...tail);
-  } else if (tail == null) {
-    return list(head);
   }
 
   return new Cons(head, tail);
