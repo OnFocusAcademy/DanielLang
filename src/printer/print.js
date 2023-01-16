@@ -20,6 +20,11 @@ const print = (obj) => {
   }
 
   if (typeof obj === "string") {
+    let str = `"${obj}"`;
+    if (str.startsWith('""') && str.endsWith('""') && str.length > 2) {
+      return str.slice(1, -1);
+    }
+
     return `"${obj}"`;
   }
 
