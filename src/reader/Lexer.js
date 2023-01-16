@@ -15,12 +15,14 @@ const {
   isDoubleQuote,
   isLParen,
   isRParen,
+  isLBrack,
   isLBrace,
   isRBrace,
   isQuote,
   isQQuote,
   isUQuote,
   isAt,
+  isRBrack,
 } = require("./helpers");
 const { Input } = require("./Input");
 // eslint-disable-next-line
@@ -288,6 +290,12 @@ exports.Lexer = class Lexer {
         this.input.skip();
       } else if (isRParen(char)) {
         tokens.push(token(TokenTypes.RParen, char, this.input.pos));
+        this.input.skip();
+      } else if (isLBrack(char)) {
+        tokens.push(token(TokenTypes.LBrack, char, this.input.pos));
+        this.input.skip();
+      } else if (isRBrack(char)) {
+        tokens.push(token(TokenTypes.RBrack, char, this.input.pos));
         this.input.skip();
       } else if (isLBrace(char)) {
         tokens.push(token(TokenTypes.LBrace, char, this.input.pos));

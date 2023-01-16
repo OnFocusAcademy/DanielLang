@@ -19,6 +19,8 @@ exports.isDot = (ch) => /\./.test(ch);
 exports.isSemicolon = (ch) => /;/.test(ch);
 exports.isLParen = (ch) => /\(/.test(ch);
 exports.isRParen = (ch) => /\)/.test(ch);
+exports.isLBrack = (ch) => /\[/.test(ch);
+exports.isRBrack = (ch) => /\]/.test(ch);
 exports.isLBrace = (ch) => /\{/.test(ch);
 exports.isRBrace = (ch) => /\}/.test(ch);
 exports.isWhitespace = (ch) => /\s|,/.test(ch);

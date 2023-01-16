@@ -69,6 +69,11 @@ const readForm = (reader) => {
       // eslint-disable-next-line
       const l = readList(reader, TokenTypes.LParen, TokenTypes.RParen);
       return l.length === 0 ? null : l;
+    case TokenTypes.LBrack:
+      return list(
+        Symbol.for("list"),
+        ...readList(reader, TokenTypes.LBrack, TokenTypes.RBrack)
+      );
     case TokenTypes.LBrace:
       return readMap(readList(reader, TokenTypes.LBrace, TokenTypes.RBrace));
 
