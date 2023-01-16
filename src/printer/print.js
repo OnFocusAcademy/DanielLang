@@ -16,10 +16,6 @@ const print = (obj) => {
     return printMap(obj);
   }
 
-  if (Array.isArray(obj)) {
-    return printVector(obj);
-  }
-
   // null or undefined
   if (obj == null) {
     return "nil";
@@ -60,12 +56,5 @@ const printMap = (map) =>
   `{${[...map.entries()]
     .map((e) => print(e[0]) + " => " + print(e[1]))
     .join(" ")}}`;
-
-/**
- * Print a vector (array)
- * @param {Array} vec
- * @returns {String}
- */
-const printVector = (vec) => `[${vec.map((v) => print(v)).join(" ")}]`;
 
 module.exports = { print, printList };
