@@ -52,6 +52,8 @@ const readForm = (reader) => {
       // eslint-disable-next-line
       const l = readList(reader, TokenTypes.LParen, TokenTypes.RParen);
       return l.length === 0 ? null : l;
+    case TokenTypes.LBrace:
+      return readMap(readList(reader, token.type, TokenTypes.RBrace));
     default:
       return readAtom(reader);
   }
@@ -87,6 +89,29 @@ const readList = (reader, start, end) => {
   reader.skip();
 
   return ast;
+};
+
+/**
+ * Converts a read list into a hash map
+ * @param {List} list
+ */
+const readMap = (list) => {
+  if (list.length % 2 !== 0) {
+    throw new Error(
+      `Hash map literal must have an even number of arguments; ${list.length} provided`
+    );
+  }
+
+  let map = new Map();
+
+  for (let i = 0; i < list.length; i += 2) {
+    const k = list.get(i);
+    const v = list.get(i + 1);
+
+    map.set(k, v);
+  }
+
+  return map;
 };
 
 /**
