@@ -5,12 +5,11 @@ const { read } = require("../reader/read");
 const { evaluate } = require("../interpreter/evaluate");
 const { print } = require("../printer/print");
 const { inputFinished, countIndent } = require("./utils");
-const { Env } = require("../interpreter/Env");
-const { provides: core } = require("../../lib/js/core");
+const { createGlobalEnv } = require("./global");
 
 const DO_OVER = Symbol("DO_OVER");
 
-const replEnv = Env.from(core);
+const replEnv = createGlobalEnv();
 
 const REP = (input) => {
   const ast = read(input);
