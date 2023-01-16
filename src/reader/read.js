@@ -7,7 +7,7 @@ const { TokenTypes } = require("./TokenTypes");
  * @typedef {number|string|symbol|boolean|null} Atom
  */
 /**
- * @typedef {Atom|Map|Array|List} AST
+ * @typedef {Atom|Map|List} AST
  */
 
 /**
