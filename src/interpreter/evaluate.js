@@ -40,7 +40,7 @@ const evalList = (ast) => {
     case Forms.Do:
       return evalDoBlock(ast);
     default:
-      throw new Error(`Unrecognized AST value ${fst}`);
+      throw new Error(`Unrecognized AST value ${String(fst)}`);
   }
 };
 
@@ -51,8 +51,9 @@ const evalList = (ast) => {
  */
 const evalDoBlock = (ast) => {
   let value;
+  const [, exprs] = ast;
 
-  for (let expr of ast) {
+  for (let expr of exprs) {
     value = evaluate(expr);
   }
 

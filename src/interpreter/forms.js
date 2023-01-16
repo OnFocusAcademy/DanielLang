@@ -4,5 +4,5 @@
  */
 
 exports.Forms = {
-  Do: "Do",
+  Do: "do",
 };
