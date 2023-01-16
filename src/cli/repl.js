@@ -53,6 +53,7 @@ const repl = () => {
       } finally {
         input = "";
         prompt = "> ";
+        indent = 0;
       }
     } else {
       input += os.EOL;
