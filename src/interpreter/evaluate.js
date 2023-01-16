@@ -34,7 +34,7 @@ const evaluate = (ast, env) => {
 };
 
 /**
- *
+ * Evaluate a list form
  * @param {List} ast
  */
 const evalList = (ast, env) => {
