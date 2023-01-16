@@ -1,4 +1,4 @@
-const { isKeyword } = require("../interpreter/helpers");
+const { isKeyword } = require("../interpreter/utils");
 // eslint-disable-next-line
 const { List, isList } = require("../_internal/List");
 
