@@ -1,8 +1,10 @@
 /**
  * @typedef Forms
- * @property {"Do"} Do
+ * @property {"do"} Do
+ * @property {"define"} Define
  */
 
 exports.Forms = {
   Do: "do",
+  Define: "define",
 };

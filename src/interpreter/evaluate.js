@@ -42,6 +42,8 @@ const evalList = (ast, env) => {
   switch (fst.description) {
     case Forms.Do:
       return evalDoBlock(ast, env);
+    case Forms.Define:
+      return evalDefine(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -90,6 +92,16 @@ const evalCall = (ast, env) => {
   args = args.map((arg) => evaluate(arg, env));
 
   return fn(...args);
+};
+
+/**
+ * Define a new symbol in the current environment
+ * @param {import("../reader/read").AST} ast
+ * @param {Env} env
+ */
+const evalDefine = (ast, env) => {
+  const [, name, value] = ast;
+  env.define(name, evaluate(value, env));
 };
 
 exports.evaluate = evaluate;
