@@ -93,6 +93,8 @@ exports.Env = class Env {
       if (current.has(key)) {
         return current;
       }
+
+      current = current.parent;
     }
 
     throw new Error(
