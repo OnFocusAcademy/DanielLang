@@ -5,7 +5,7 @@ const { isList, List, list, cons } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
-const { isKeyword, isFalsy } = require("./utils");
+const { isKeyword, isTruthy } = require("./utils");
 /**
  * Evaluate an AST as code
  * @param {import("../reader/read").AST} ast
@@ -127,7 +127,7 @@ const evalDefine = (ast, env) => {
 const evalIf = (ast, env) => {
   const [, cond, then, orElse] = ast;
 
-  if (!isFalsy(evaluate(cond, env))) {
+  if (isTruthy(evaluate(cond, env))) {
     return evaluate(then, env);
   }
 
