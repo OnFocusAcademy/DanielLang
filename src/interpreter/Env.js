@@ -26,14 +26,31 @@ exports.Env = class Env {
     let env = new Env({ parent, name });
 
     for (let sym of Object.getOwnPropertySymbols(vars)) {
-      env.set(sym, vars[sym]);
+      env.define(sym, vars[sym]);
     }
 
     for (let [key, value] of Object.entries(vars)) {
-      env.set(Symbol.for(key), value);
+      env.define(Symbol.for(key), value);
     }
 
     return env;
+  }
+
+  /**
+   * Defines a new value in the current env's namespace
+   * @param {Symbol} name
+   * @param {import("../reader/read").AST|Object} value
+   * @returns {Boolean}
+   */
+  define(name, value) {
+    if (this.has(name)) {
+      throw new Error(
+        `Name ${name.description} is already defined in the current environment`
+      );
+    }
+
+    this.set(name, value);
+    return this.has(name);
   }
 
   /**
