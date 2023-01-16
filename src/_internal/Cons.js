@@ -1,3 +1,5 @@
+const { print } = require("../printer/print");
+
 /**
  * Cons cell that makes up the basic data structure for Lisp code
  *
@@ -14,6 +16,13 @@ class Cons {
   constructor(head, tail) {
     this.head = head;
     this.tail = tail;
+  }
+
+  /**
+   * @returns {String}
+   */
+  toString() {
+    return `(${print(this.head)} . ${print(this.tail)})`;
   }
 }
 
