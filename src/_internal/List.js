@@ -54,6 +54,13 @@ class List {
   }
 
   /**
+   * Get the first element in the list
+   */
+  first() {
+    return this.head?.value ?? null;
+  }
+
+  /**
    * Get the value at i in the current List
    * @param {Number} i index
    */
@@ -89,6 +96,21 @@ class List {
     }
 
     return false;
+  }
+
+  /**
+   * Alias for first
+   */
+  head() {
+    return this.first();
+  }
+
+  /**
+   * Get last element of list
+   */
+  last() {
+    if (this.length === 0) return null;
+    return this.end.value;
   }
 
   /**
@@ -131,6 +153,19 @@ class List {
     }
 
     return accum;
+  }
+
+  /**
+   * Get the tail of the list as a list
+   */
+  tail() {
+    if (this.length === 0 || this.length === 1) {
+      return null;
+    }
+
+    // eslint-disable-next-line
+    const [_, ...tail] = this;
+    return list(...tail);
   }
 
   *[Symbol.iterator]() {
