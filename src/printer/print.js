@@ -35,7 +35,7 @@ const print = (obj) => {
     return `'${Symbol.keyFor(obj)}`;
   }
 
-  throw new Error(`Print not implemented for ${obj}`);
+  return String(obj);
 };
 
 /**
