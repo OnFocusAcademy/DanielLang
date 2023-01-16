@@ -1,5 +1,3 @@
-const { isKeyword } = require("../interpreter/utils");
-
 /**
  * Print the result of any expression
  * @param {Any} obj
@@ -32,12 +30,8 @@ const print = (obj) => {
     return obj;
   }
 
-  if (isKeyword(obj)) {
-    return Symbol.keyFor(obj);
-  }
-
   if (typeof obj === "symbol") {
-    return `'${Symbol.keyFor(obj)}`;
+    return `${Symbol.keyFor(obj)}`;
   }
 
   return String(obj);
