@@ -36,12 +36,12 @@ const evaluate = (ast, env) => {
  * @param {List} ast
  * @returns {import("../reader/read").AST|Object}
  */
-const evalList = (ast) => {
+const evalList = (ast, env) => {
   const [fst] = ast;
 
   switch (fst.description) {
     case Forms.Do:
-      return evalDoBlock(ast);
+      return evalDoBlock(ast, env);
     default:
       throw new Error(`Unrecognized AST value ${String(fst)}`);
   }

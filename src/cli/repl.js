@@ -5,12 +5,18 @@ const { read } = require("../reader/read");
 const { evaluate } = require("../interpreter/evaluate");
 const { print } = require("../printer/print");
 const { inputFinished, countIndent } = require("./utils");
+const { Env } = require("../interpreter/Env");
 
 const DO_OVER = Symbol("DO_OVER");
 
+const replEnv = Env.from({
+  "+": (a, b) => a + b,
+  greeting: "hello",
+});
+
 const REP = (input) => {
   const ast = read(input);
-  const output = evaluate(ast);
+  const output = evaluate(ast, replEnv);
   console.log(print(output));
 };
 
