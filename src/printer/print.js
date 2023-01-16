@@ -25,7 +25,7 @@ const print = (obj) => {
       return str.slice(1, -1);
     }
 
-    return `"${obj}"`;
+    return str;
   }
 
   if (typeof obj === "boolean" || typeof obj === "number") {
