@@ -150,7 +150,7 @@ const read = (input) => {
     ast.append(readForm(reader));
   }
 
-  return ast;
+  return list(Symbol.for("do"), ast);
 };
 
 exports.read = read;
