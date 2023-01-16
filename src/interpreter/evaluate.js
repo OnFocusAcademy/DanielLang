@@ -3,7 +3,7 @@ const { isList, List } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
-const { isKeyword } = require("./utils");
+const { isKeyword, isFalsy } = require("./utils");
 /**
  * Evaluate an AST as code
  * @param {import("../reader/read").AST} ast
@@ -44,6 +44,8 @@ const evalList = (ast, env) => {
       return evalDoBlock(ast, env);
     case Forms.Define:
       return evalDefine(ast, env);
+    case Forms.If:
+      return evalIf(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -52,7 +54,6 @@ const evalList = (ast, env) => {
 /**
  * Evaluate subexpressions of a block in order
  * @param {List} ast
- * @returns {import("../reader/read").AST|Object}
  */
 const evalDoBlock = (ast, env) => {
   let value;
@@ -76,7 +77,7 @@ const evalSymbol = (ast, env) => {
 
 /**
  * Evaluate a call expression
- * @param {import("../reader/read").AST} ast
+ * @param {List} ast
  * @param {Env} env
  */
 const evalCall = (ast, env) => {
@@ -96,12 +97,27 @@ const evalCall = (ast, env) => {
 
 /**
  * Define a new symbol in the current environment
- * @param {import("../reader/read").AST} ast
+ * @param {List} ast
  * @param {Env} env
  */
 const evalDefine = (ast, env) => {
   const [, name, value] = ast;
   env.define(name, evaluate(value, env));
+};
+
+/**
+ * Evaluate an if expression
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalIf = (ast, env) => {
+  const [, cond, then, orElse] = ast;
+
+  if (!isFalsy(cond)) {
+    return evaluate(then, env);
+  }
+
+  return evaluate(orElse, env);
 };
 
 exports.evaluate = evaluate;
