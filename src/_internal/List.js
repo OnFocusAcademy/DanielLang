@@ -75,9 +75,7 @@ class List {
       idx++;
     }
 
-    throw new Error(
-      `Index out of bounds error: list does not contain ${i} elements`
-    );
+    return null;
   }
 
   /**
