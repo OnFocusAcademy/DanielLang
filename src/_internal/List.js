@@ -1,3 +1,4 @@
+const { printList } = require("../printer/print.js");
 const { Cons } = require("./Cons.js");
 
 /**
@@ -176,7 +177,7 @@ class List {
   }
 
   toString() {
-    return `(${[...this].map((n) => String(n)).join(" ")})`;
+    return printList(this);
   }
 }
 
@@ -204,8 +205,11 @@ const list = (...args) => {
   return l;
 };
 
+const isList = (obj) => obj instanceof List;
+
 module.exports = {
   List,
   cons,
   list,
+  isList,
 };
