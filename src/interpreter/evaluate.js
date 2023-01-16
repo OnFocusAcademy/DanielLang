@@ -110,6 +110,12 @@ const evalDefine = (ast, env) => {
     return evalFuncDef(ast, env);
   }
 
+  if (typeof name !== "symbol") {
+    throw new Error(
+      `Variable definition must use a valid symbol; ${typeof name} given`
+    );
+  }
+
   env.define(name, evaluate(value, env));
 };
 
