@@ -6,13 +6,11 @@ const { evaluate } = require("../interpreter/evaluate");
 const { print } = require("../printer/print");
 const { inputFinished, countIndent } = require("./utils");
 const { Env } = require("../interpreter/Env");
+const { provides: core } = require("../../lib/js/core");
 
 const DO_OVER = Symbol("DO_OVER");
 
-const replEnv = Env.from({
-  "+": (a, b) => a + b,
-  greeting: "hello",
-});
+const replEnv = Env.from(core);
 
 const REP = (input) => {
   const ast = read(input);
