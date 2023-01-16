@@ -113,7 +113,7 @@ const evalDefine = (ast, env) => {
 const evalIf = (ast, env) => {
   const [, cond, then, orElse] = ast;
 
-  if (!isFalsy(cond)) {
+  if (!isFalsy(evaluate(cond, env))) {
     return evaluate(then, env);
   }
 
