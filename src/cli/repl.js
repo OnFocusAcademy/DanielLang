@@ -13,8 +13,9 @@ const replEnv = createGlobalEnv();
 
 const REP = (input) => {
   const ast = read(input);
-  const output = evaluate(ast, replEnv);
-  console.log(print(output));
+  const result = evaluate(ast, replEnv);
+  const output = print(result);
+  console.log(output === "nil" ? "" : output);
 };
 
 const getInput = (prompt) => {
