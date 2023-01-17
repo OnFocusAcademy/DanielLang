@@ -9,4 +9,5 @@ exports.Forms = {
   Lambda: "lambda",
   Let: "let",
   Set: "set!",
+  For: "for",
 };

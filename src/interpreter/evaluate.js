@@ -51,6 +51,8 @@ const evalList = (ast, env) => {
       return evalLambda(ast, env);
     case Forms.Set:
       return evalSet(ast, env);
+    case Forms.For:
+      return evalFor(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -227,6 +229,25 @@ const evalFuncDef = (ast, env) => {
   const fn = makeLambda(list(args, blockBody), env, Symbol.keyFor(name));
 
   env.define(name, fn);
+};
+
+/**
+ * Evaluates a for loop
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalFor = (ast, env) => {
+  const [, binding, ...body] = ast;
+  const [name, iter] = binding;
+  const blockBody = list(Symbol.for("do"), ...body);
+  let retVal;
+
+  for (let value of evaluate(iter, env)) {
+    env.set(name, value);
+    retVal = evaluate(blockBody, env);
+  }
+
+  return retVal;
 };
 
 exports.evaluate = evaluate;
