@@ -64,10 +64,9 @@ const evalList = (ast, env) => {
 const evalDoBlock = (ast, env) => {
   let value;
   const exprs = ast.tail();
-  const blockEnv = env.extend("do");
 
   for (let expr of exprs) {
-    value = evaluate(expr, blockEnv);
+    value = evaluate(expr, env);
   }
 
   return value;
