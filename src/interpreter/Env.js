@@ -42,7 +42,7 @@ exports.Env = class Env {
    */
   addMany(vars) {
     for (let key of getAllOwnKeys(vars)) {
-      this.set(typeof key === "symbol" ? key : Symbol.for(key), vars[key]);
+      this.define(typeof key === "symbol" ? key : Symbol.for(key), vars[key]);
     }
 
     return this;
