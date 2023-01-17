@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 const { makeFunction } = require("../runtime");
 // eslint-disable-next-line
-const { isList, List, list, cons } = require("../_internal/List");
+const { isList, List, list } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
