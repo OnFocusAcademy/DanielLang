@@ -19,6 +19,20 @@ class Cons {
   }
 
   /**
+   * Returns the 1st element in a cons pair
+   */
+  fst() {
+    return this.head;
+  }
+
+  /**
+   * Returns the 2nd element in a cons pair
+   */
+  snd() {
+    return this.tail;
+  }
+
+  /**
    * @returns {String}
    */
   toString() {

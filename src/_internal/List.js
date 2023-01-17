@@ -238,6 +238,41 @@ class List {
   }
 
   /**
+   * Sets the list item at element key, returns false if key does not exist
+   * @param {Number} key
+   * @param {Any} val
+   * @returns {Boolean}
+   */
+  set(key, val) {
+    let i = 0;
+
+    /**
+     * Get the node at position key if it exists
+     * @returns {Cons|undefined}
+     */
+    const getNode = () => {
+      let node = this.head;
+      while (node) {
+        if (i === key) {
+          return node;
+        }
+
+        node = node.tail;
+        i++;
+      }
+    };
+
+    let node = getNode();
+
+    if (node) {
+      node.head = val;
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Copies a portion of the list to a new list from start to end - 1 or end of list
    * @param {Number} start
    * @param {Number} end
