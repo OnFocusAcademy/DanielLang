@@ -259,7 +259,7 @@ const evalFor = (ast, env) => {
  * @param {Env} env
  */
 const evalForList = (ast, env) => {
-  const [_, binding, ...body] = ast;
+  const [, binding, ...body] = ast;
   const [name, iter, ...whenClause] = binding;
   const blockBody = list(Symbol.for("do"), ...body);
   const iterator = evaluate(iter, env);
