@@ -39,6 +39,37 @@ class List {
   }
 
   /**
+   * Concatenates one or more lists to the present list
+   * @param  {...List} lists
+   * @returns {List}
+   */
+  concat(...lists) {
+    let newList = this.copy();
+
+    for (let list of lists) {
+      for (let value of list) {
+        newList.append(value);
+      }
+    }
+
+    return newList;
+  }
+
+  /**
+   * Copies the values in the current list to a new list
+   * @returns {List}
+   */
+  copy() {
+    let copy = new List();
+
+    for (let value of this) {
+      copy.append(value);
+    }
+
+    return copy;
+  }
+
+  /**
    * Return a new list with every element in the current list that satisfies fn
    * @param {Function} fn filter predicate
    */
