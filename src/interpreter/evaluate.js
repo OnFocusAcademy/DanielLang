@@ -59,13 +59,15 @@ const evalList = (ast, env) => {
 /**
  * Evaluate subexpressions of a block in order
  * @param {List} ast
+ * @param {Env} env
  */
 const evalDoBlock = (ast, env) => {
   let value;
   const exprs = ast.tail();
+  const blockEnv = env.extend("do");
 
   for (let expr of exprs) {
-    value = evaluate(expr, env);
+    value = evaluate(expr, blockEnv);
   }
 
   return value;
