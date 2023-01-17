@@ -268,9 +268,9 @@ const evalForList = (ast, env) => {
 
   for (let value of iterator) {
     env.set(name, value);
-    const predicate = predAST?.length > 0 ? evaluate(predAST, env) : null;
+    const predicate = predAST?.length > 0 ? evaluate(predAST, env) : true;
 
-    if (predicate == null || predicate) {
+    if (predicate) {
       l.append(evaluate(blockBody, env));
     }
   }
