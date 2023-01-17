@@ -35,7 +35,7 @@ class Range {
   }
 
   toString() {
-    return `Range { ${this.start}..${this.end}..${this.step} }`;
+    return `Range { start: ${this.start} end: ${this.end} step: ${this.step} }`;
   }
 }
 
