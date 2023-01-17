@@ -5,6 +5,7 @@
  * @property {"if"} If
  * @property {"lambda"} Lambda
  * @property {"let"} Let
+ * @property {"set!"} Set
  */
 
 exports.Forms = {
@@ -13,4 +14,5 @@ exports.Forms = {
   If: "if",
   Lambda: "lambda",
   Let: "let",
+  Set: "set!",
 };

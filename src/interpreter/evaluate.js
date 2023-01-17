@@ -49,6 +49,8 @@ const evalList = (ast, env) => {
       return evalIf(ast, env);
     case Forms.Lambda:
       return evalLambda(ast, env);
+    case Forms.Set:
+      return evalSet(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -117,6 +119,25 @@ const evalDefine = (ast, env) => {
   }
 
   env.define(name, evaluate(value, env));
+};
+
+/**
+ * Sets a new value for an already-defined variable
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalSet = (ast, env) => {
+  const [, name, value] = ast;
+
+  if (typeof name !== "symbol") {
+    throw new Error(
+      `Variable name to set must be a valid symbol; ${typeof name} given`
+    );
+  }
+
+  const setEnv = env.lookup(name);
+
+  env.set(name, evaluate(value, setEnv));
 };
 
 /**
