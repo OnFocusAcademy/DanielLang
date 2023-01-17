@@ -10,4 +10,5 @@ exports.Forms = {
   Let: "let",
   Set: "set!",
   For: "for",
+  ForList: "for/list",
 };

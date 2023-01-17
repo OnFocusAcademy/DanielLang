@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 const { makeFunction } = require("../runtime");
 // eslint-disable-next-line
-const { isList, List, list } = require("../_internal/List");
+const { isList, List, list, cons } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
@@ -53,6 +53,8 @@ const evalList = (ast, env) => {
       return evalSet(ast, env);
     case Forms.For:
       return evalFor(ast, env);
+    case Forms.ForList:
+      return evalForList(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -240,14 +242,40 @@ const evalFor = (ast, env) => {
   const [, binding, ...body] = ast;
   const [name, iter] = binding;
   const blockBody = list(Symbol.for("do"), ...body);
+  const iterator = evaluate(iter, env);
   let retVal;
 
-  for (let value of evaluate(iter, env)) {
-    env.set(name, value);
+  for (let value of iterator) {
+    env.set(name, iterator instanceof Map ? cons(value[0], value[1]) : value);
     retVal = evaluate(blockBody, env);
   }
 
   return retVal;
+};
+
+/**
+ * Evaluates a list comprehension
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalForList = (ast, env) => {
+  const [_, binding, ...body] = ast;
+  const [name, iter, ...whenClause] = binding;
+  const blockBody = list(Symbol.for("do"), ...body);
+  const iterator = evaluate(iter, env);
+  const [, predAST] = whenClause;
+  let l = new List();
+
+  for (let value of iterator) {
+    env.set(name, value);
+    const predicate = predAST?.length > 0 ? evaluate(predAST, env) : null;
+
+    if (predicate == null || predicate) {
+      l.append(evaluate(blockBody, env));
+    }
+  }
+
+  return l;
 };
 
 exports.evaluate = evaluate;
