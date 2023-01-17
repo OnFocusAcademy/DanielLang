@@ -1,6 +1,3 @@
-// eslint-disable-next-line
-const { List } = require("../_internal/List");
-
 /**
  * Print the result of any expression
  * @param {Any} obj
