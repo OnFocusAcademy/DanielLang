@@ -3,7 +3,7 @@
  * @property {Number} start
  * @property {Number} end
  * @property {Number} step
- * @property {Number} range
+ * @property {Number} length
  */
 class Range {
   /**
@@ -15,7 +15,7 @@ class Range {
   constructor(start, end, step) {
     this.start = start;
     this.end = end;
-    this.step = step < 0 ? -step : step;
+    this.step = Math.abs(step);
     this.length = Math.abs(this.end - this.start);
   }
 
@@ -23,13 +23,19 @@ class Range {
     let i = this.start;
     if (this.end < this.start) {
       while (i > this.end) {
-        yield i--;
+        yield i;
+        i -= this.step;
       }
     } else {
       while (i < this.end) {
-        yield i++;
+        yield i;
+        i += this.step;
       }
     }
+  }
+
+  toString() {
+    return `Range { ${this.start}..${this.end}..${this.step} }`;
   }
 }
 
