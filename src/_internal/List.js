@@ -45,10 +45,13 @@ class List {
   filter(fn) {
     let filtered = new List();
 
+    let i = 0;
     for (let value of this) {
-      if (fn(value)) {
+      if (fn(value, i)) {
         filtered.append(value);
       }
+
+      i++;
     }
 
     return filtered.length ? filtered : null;
@@ -123,6 +126,21 @@ class List {
   }
 
   /**
+   * Joins the list elements into a string, casting each element to a string
+   * @param {String} [separator=""]
+   * @returns {String}
+   */
+  join(separator = "", stringifier = String) {
+    return this.reduce((str, el, i) => {
+      if (i === 0) {
+        return stringifier(el);
+      }
+
+      return `${str}${separator}${stringifier(el)}`;
+    }, "");
+  }
+
+  /**
    * Get last element of list
    */
   last() {
@@ -165,8 +183,10 @@ class List {
   reduce(fn, init) {
     let accum = init;
 
+    let i = 0;
     for (let value of this) {
-      accum = fn(accum, value);
+      accum = fn(accum, value, i);
+      i++;
     }
 
     return accum;

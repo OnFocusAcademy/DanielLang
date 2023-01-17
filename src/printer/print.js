@@ -1,3 +1,6 @@
+// eslint-disable-next-line
+const { List } = require("../_internal/List");
+
 /**
  * Print the result of any expression
  * @param {Any} obj
@@ -42,7 +45,7 @@ const print = (obj) => {
  * @param {List} list
  * @returns {String}
  */
-const printList = (list) => `(${[...list].map(print).join(" ")})`;
+const printList = (list) => `(${list.map(print).join(" ")})`;
 
 /**
  * Print a map
