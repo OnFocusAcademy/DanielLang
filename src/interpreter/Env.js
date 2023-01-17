@@ -30,11 +30,22 @@ exports.Env = class Env {
   static from(vars, { parent = null, name = "global" } = {}) {
     let env = new Env({ parent, name });
 
-    for (let key of getAllOwnKeys(vars)) {
-      env.set(typeof key === "symbol" ? key : Symbol.for(key), vars[key]);
-    }
+    env.addMany(vars);
 
     return env;
+  }
+
+  /**
+   * Add an object containing many name/value pairs to the current env's namespace
+   * @param {Object} vars an object of name/value pairs
+   * @returns {Env}
+   */
+  addMany(vars) {
+    for (let key of getAllOwnKeys(vars)) {
+      this.set(typeof key === "symbol" ? key : Symbol.for(key), vars[key]);
+    }
+
+    return this;
   }
 
   /**
