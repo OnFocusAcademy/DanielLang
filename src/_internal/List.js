@@ -58,6 +58,22 @@ class List {
   }
 
   /**
+   * Returns the index of the first element to match search
+   * @param {Function} search predicate to match on elements
+   */
+  findIndex(search) {
+    let i = 0;
+    for (let value of this) {
+      if (search(value)) {
+        return i;
+      }
+      i++;
+    }
+
+    return -1;
+  }
+
+  /**
    * Get the first element in the list
    */
   first() {
@@ -94,28 +110,26 @@ class List {
   }
 
   /**
-   * Check if list has an element at index i
-   * @param {Number} i
+   * Alias for first
+   */
+  head() {
+    return this.first();
+  }
+
+  /**
+   * Check if list has a value as an element
+   * @param {Any} i
    * @returns {Boolean}
    */
-  has(i) {
-    let idx = 0;
-
+  includes(search) {
     // eslint-disable-next-line
-    for (let _ of this) {
-      if (i === idx) {
+    for (let value of this) {
+      if (search === value) {
         return true;
       }
     }
 
     return false;
-  }
-
-  /**
-   * Alias for first
-   */
-  head() {
-    return this.first();
   }
 
   /**
@@ -190,6 +204,29 @@ class List {
     }
 
     return accum;
+  }
+
+  /**
+   * Copies a portion of the list to a new list from start to end - 1 or end of list
+   * @param {Number} start
+   * @param {Number} end
+   * @returns {List}
+   */
+  slice(start = 0, end = this.length) {
+    const stop = end < 0 ? this.length - end : end;
+    let i = start < 0 ? this.length - start : start;
+    let copy = new List();
+
+    for (let value of this) {
+      if (i === stop) {
+        break;
+      }
+
+      copy.append(value);
+      i++;
+    }
+
+    return copy;
   }
 
   /**

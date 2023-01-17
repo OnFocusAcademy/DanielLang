@@ -77,6 +77,11 @@ const readForm = (reader) => {
     case TokenTypes.LBrace:
       return readMap(readList(reader, TokenTypes.LBrace, TokenTypes.RBrace));
 
+    // special cases
+    case TokenTypes.Amp:
+      reader.skip();
+      return "&";
+
     // atoms
     default:
       return readAtom(reader);

@@ -2,25 +2,7 @@
  * Enum representing possible token types
  */
 /**
- * @typedef TokenTypes
- * @property {"Number"} Number
- * @property {"Boolean"} Boolean
- * @property {"String"} String
- * @property {"Nil"} Nil
- * @property {"Symbol"} Symbol
- * @property {"Keyword"} Keyword
- * @property {"LParen"} LParen
- * @property {"RParen"} RParen
- * @property {"LBrack"} LBrack
- * @property {"RBrack"} RBrack
- * @property {"LBrace"} LBrace
- * @property {"RBrace"} RBrace
- * @property {"Quote"} Quote
- * @property {"QQuote"} QQuote
- * @property {"UQuote"} UQuote
- * @property {"SUQuote"} SUQuote
- * @property {"Amp"} Amp
- * @property {"Hash"} Hash
+ * @enum {String}
  */
 exports.TokenTypes = {
   Number: "Number",

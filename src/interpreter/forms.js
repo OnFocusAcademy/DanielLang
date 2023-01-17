@@ -1,11 +1,5 @@
 /**
- * @typedef Forms
- * @property {"do"} Do
- * @property {"define"} Define
- * @property {"if"} If
- * @property {"lambda"} Lambda
- * @property {"let"} Let
- * @property {"set!"} Set
+ * @enum {String}
  */
 
 exports.Forms = {

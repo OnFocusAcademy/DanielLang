@@ -38,9 +38,13 @@ const makeModule = (name, provides) => new Module(name, provides);
  * @param {Object} kwargs
  * @param {String} kwargs.name
  */
-const makeFunction = (func, { name = func.name ?? "lambda" } = {}) => {
+const makeFunction = (
+  func,
+  { name = func.name ?? "lambda", variadic = false } = {}
+) => {
   func.__name__ = name;
   func.daniel = true;
+  func.variadic = variadic;
 
   func.toString = () => `Function ${func.__name__}`;
 

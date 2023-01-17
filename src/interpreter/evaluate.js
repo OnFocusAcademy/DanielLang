@@ -172,15 +172,39 @@ const evalLambda = (ast, env) => {
  * @param {String} [name=lambda]
  */
 const makeLambda = (ast, env, name = "lambda") => {
-  const [args, body] = ast;
+  let [args, body] = ast;
+  let ampIdx = args.findIndex((el) => el === "&");
+  let variadic = ampIdx > -1;
+
   const lambda = (...params) => {
     let scope = env.extend(name);
-    args.forEach((arg, i) => scope.define(arg, evaluate(params[i], env)));
+    let i = 0;
+    // let rest = list(Symbol.for("list"));
+
+    for (let arg of args) {
+      if (arg === "&") {
+        const rest = list(...params.slice(i));
+        const restParam = args.get(i + 1);
+
+        if (typeof restParam !== "symbol") {
+          throw new Error(
+            `Function rest parameter must be a valid symbol; ${typeof restParam} given`
+          );
+        }
+
+        scope.define(restParam, rest);
+        break;
+      } else {
+        scope.define(args.get(i), evaluate(params[i]));
+      }
+
+      i++;
+    }
 
     return evaluate(body, scope);
   };
 
-  return makeFunction(lambda, { name });
+  return makeFunction(lambda, { name, variadic });
 };
 
 /**

@@ -25,3 +25,4 @@ exports.isWhitespace = (ch) => /\s|,/.test(ch);
 exports.isNewline = (ch) => ch === os.EOL;
 exports.isMinus = (ch) => /-/.test(ch);
 exports.isZero = (ch) => /0/.test(ch);
+exports.isAmp = (ch) => /&/.test(ch);

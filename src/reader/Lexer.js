@@ -23,6 +23,7 @@ const {
   isUQuote,
   isAt,
   isRBrack,
+  isAmp,
 } = require("./utils");
 const { Input } = require("./Input");
 // eslint-disable-next-line
@@ -313,11 +314,14 @@ exports.Lexer = class Lexer {
         const pos = this.input.pos;
         let sym = this.input.next();
         if (isAt(this.input.peek())) {
-          sym = this.input.next();
+          sym += this.input.next();
           tokens.push(token(TokenTypes.SUQuote, sym, pos));
         } else {
           tokens.push(token(TokenTypes.UQuote, char, this.input.pos));
         }
+      } else if (isAmp(char)) {
+        tokens.push(token(TokenTypes.Amp, char, this.input.pos));
+        this.input.skip();
       } else {
         throw new Error(`Unknown token ${char} at position ${this.input.pos}`);
       }
