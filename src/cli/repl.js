@@ -12,8 +12,8 @@ const DO_OVER = Symbol("DO_OVER");
 const REP = (input) => {
   const ast = read(input);
   const result = evaluate(ast, global.extend("main"));
-  const output = print(result);
-  console.log(output === "nil" ? "" : output);
+  const output = print(result, false);
+  console.log(output);
 };
 
 const getInput = (prompt) => {

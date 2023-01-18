@@ -3,7 +3,7 @@
  * @param {Any} obj
  * @returns {String}
  */
-const print = (obj) => {
+const print = (obj, quoteString = true) => {
   // null or undefined
   if (obj == null) {
     return "nil";
@@ -26,9 +26,8 @@ const print = (obj) => {
     if (str.startsWith('""') && str.endsWith('""') && str.length > 2) {
       return str.slice(1, -1);
     }
-    console.log(str.endsWith(require("os").EOL));
 
-    return str;
+    return quoteString ? obj : obj.slice(1, -1);
   }
 
   if (typeof obj === "symbol") {
