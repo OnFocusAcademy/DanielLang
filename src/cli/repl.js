@@ -8,10 +8,11 @@ const { inputFinished, countIndent } = require("./utils");
 const { global } = require("./global");
 
 const DO_OVER = Symbol("DO_OVER");
+const main = global.extend("main");
 
 const REP = (input) => {
   const ast = read(input);
-  const result = evaluate(ast, global.extend("main"));
+  const result = evaluate(ast, main);
   const output = print(result, false);
   console.log(output);
 };

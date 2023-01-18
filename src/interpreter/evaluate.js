@@ -96,32 +96,32 @@ const evalCall = (ast, env) => {
 
   if (typeof fn !== "function" && !fn.daniel) {
     throw new Error(
-      `Call expression callee must be a function; ${typeof func} given`
+      `Call expression callee must be a function; ${typeof fn} given`
     );
   }
 
   args = args.map((arg) => evaluate(arg, env));
 
   if (fn.daniel) {
+    const scope = fn.env.extend(fn.__name__);
     // we're going to sloppily allow extra arguments to any function
     // because JS does and it's just easier that way
     fn.params.forEach((param, i) => {
       if (fn.variadic && i === fn.length) {
-        fn.env.define(param, args.slice(i));
+        scope.define(param, args.slice(i));
       } else {
-        fn.env.define(param, args.get(i));
+        scope.define(param, args[i]);
       }
     });
 
     // Body is do block, using loop to eliminate at least 1 recursive call
-    const [, exprs] = fn.body;
     let value = null;
 
-    for (let expr of exprs) {
+    for (let expr of fn.body.tail()) {
       if (isList(expr)) {
-        value = evalList(expr, fn.env);
+        value = evalList(expr, scope);
       } else {
-        value = evaluate(expr, fn.env);
+        value = evaluate(expr, scope);
       }
     }
 
@@ -204,14 +204,13 @@ const evalLambda = (ast, env) => {
  */
 const makeLambda = (ast, env, name = "lambda") => {
   const [args, ...body] = ast;
-  const scope = env.extend("lambda");
   const blockBody = list(Symbol.for("do"), ...body);
-  const restIdx = args.find((arg) => arg === "&");
+  const restIdx = args.findIndex((arg) => arg === "&");
   const variadic = restIdx > -1;
   const params = args.filter((arg) => arg !== "&");
   const length = variadic ? params.length - 1 : params.length;
 
-  return new Lambda(scope, params, variadic, blockBody, length, name);
+  return new Lambda(env, params, variadic, blockBody, length, name);
 };
 
 /**
@@ -223,7 +222,6 @@ const evalFuncDef = (ast, env) => {
   const [, header, body] = ast;
   const name = header.first();
   const args = header.tail();
-  let blockBody = list(Symbol.for("do")).append(body);
 
   if (typeof name !== "symbol") {
     throw new Error(
@@ -231,7 +229,7 @@ const evalFuncDef = (ast, env) => {
     );
   }
 
-  const fn = makeLambda(list(args, blockBody), env, Symbol.keyFor(name));
+  const fn = makeLambda(list(args, body), env, Symbol.keyFor(name));
 
   env.define(name, fn);
 };

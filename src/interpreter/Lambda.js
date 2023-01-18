@@ -5,6 +5,7 @@
  * @property {List} body
  * @property {Number} length
  * @property {String} __name__
+ * @property {true} daniel
  */
 class Lambda {
   /**
@@ -22,6 +23,10 @@ class Lambda {
     this.body = body;
     this.length = length;
     this.__name__ = __name__;
+    /**
+     * @type {true}
+     */
+    this.daniel = true;
   }
 }
 exports.Lambda = Lambda;
