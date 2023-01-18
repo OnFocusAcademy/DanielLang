@@ -5,6 +5,7 @@ const { isList, List, list, cons } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
+const { Lambda } = require("./Lambda");
 const { isKeyword, isTruthy } = require("./utils");
 /**
  * Evaluate an AST as code
@@ -48,7 +49,7 @@ const evalList = (ast, env) => {
     case Forms.If:
       return evalIf(ast, env);
     case Forms.Lambda:
-      return evalLambda(ast, env);
+      return evalLambda(ast.tail(), env);
     case Forms.Set:
       return evalSet(ast, env);
     case Forms.For:
@@ -92,15 +93,41 @@ const evalSymbol = (ast, env) => {
  */
 const evalCall = (ast, env) => {
   let [fn, ...args] = ast;
+
   fn = evaluate(fn, env);
 
-  if (typeof fn !== "function") {
+  if (typeof fn !== "function" && !fn.daniel) {
     throw new Error(
       `Call expression callee must be a function; ${typeof func} given`
     );
   }
 
-  args = args.map((arg) => evaluate(arg, env));
+  args = list(args.map((arg) => evaluate(arg, env)));
+
+  if (fn.daniel) {
+    // { env: scope, params, variadic, blockBody, length, __name__: name }
+    fn.params.forEach((param, i) => {
+      if (fn.variadic && i === fn.length - 1) {
+        fn.env.define(param, args.slice(i));
+      } else {
+        fn.env.define(param, args.get(i));
+      }
+    });
+
+    // Body is do block, using loop to eliminate at least 1 recursive call
+    const [, exprs] = fn.body;
+    let value = null;
+
+    for (let expr of exprs) {
+      if (isList(expr)) {
+        value = evalList(expr, fn.env);
+      } else {
+        value = evaluate(expr, fn.env);
+      }
+    }
+
+    return value;
+  }
 
   return fn(...args);
 };
@@ -166,49 +193,26 @@ const evalIf = (ast, env) => {
  * @param {Env} env
  */
 const evalLambda = (ast, env) => {
-  return makeLambda(ast.tail(), env);
+  return makeLambda(ast, env);
 };
 
 /**
- * Creates a function
+ * Makes a Daniel function
  * @param {List} ast
  * @param {Env} env
  * @param {String} [name=lambda]
+ * @returns {Lambda}
  */
 const makeLambda = (ast, env, name = "lambda") => {
-  let [args, body] = ast;
-  let ampIdx = args.findIndex((el) => el === "&");
-  let variadic = ampIdx > -1;
+  const [args, ...body] = ast;
+  const scope = env.extend("lambda");
+  const blockBody = list(Symbol.for("do"), ...body);
+  const restIdx = args.find((arg) => arg === "&");
+  const variadic = restIdx > -1;
+  const params = args.filter((arg) => arg !== "&");
+  const length = params.length;
 
-  const lambda = (...params) => {
-    let scope = env.extend(name);
-    let i = 0;
-    // let rest = list(Symbol.for("list"));
-
-    for (let arg of args) {
-      if (arg === "&") {
-        const rest = list(...params.slice(i));
-        const restParam = args.get(i + 1);
-
-        if (typeof restParam !== "symbol") {
-          throw new Error(
-            `Function rest parameter must be a valid symbol; ${typeof restParam} given`
-          );
-        }
-
-        scope.define(restParam, rest);
-        break;
-      } else {
-        scope.define(args.get(i), evaluate(params[i]));
-      }
-
-      i++;
-    }
-
-    return evaluate(body, scope);
-  };
-
-  return makeFunction(lambda, { name, variadic });
+  return new Lambda(scope, params, variadic, blockBody, length, name);
 };
 
 /**

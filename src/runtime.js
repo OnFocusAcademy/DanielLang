@@ -43,10 +43,8 @@ const makeFunction = (
   { name = func.name ?? "lambda", variadic = false } = {}
 ) => {
   func.__name__ = name;
-  func.daniel = true;
+  func.daniel = false;
   func.variadic = variadic;
-
-  func.toString = () => `Function ${func.__name__}`;
 
   return func;
 };

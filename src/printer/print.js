@@ -12,6 +12,10 @@ const print = (obj) => {
     return printMap(obj);
   }
 
+  if (typeof obj === "function" || obj.daniel) {
+    return `Function ${obj.__name__}`;
+  }
+
   // null or undefined
   if (obj == null) {
     return "nil";

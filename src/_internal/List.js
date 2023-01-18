@@ -78,7 +78,7 @@ class List {
 
     let i = 0;
     for (let value of this) {
-      if (fn(value, i)) {
+      if (fn(value, i, this)) {
         filtered.append(value);
       }
 
@@ -118,7 +118,7 @@ class List {
   forEach(fn) {
     let i = 0;
     for (let value of this) {
-      fn(value, i++);
+      fn(value, i++, this);
     }
   }
 
@@ -200,8 +200,9 @@ class List {
   map(fn) {
     let mapped = new List();
 
+    let i = 0;
     for (let value of this) {
-      mapped.append(fn(value));
+      mapped.append(fn(value, i++, this));
     }
 
     return mapped.length ? mapped : null;
@@ -230,7 +231,7 @@ class List {
 
     let i = 0;
     for (let value of this) {
-      accum = fn(accum, value, i);
+      accum = fn(accum, value, i, this);
       i++;
     }
 
