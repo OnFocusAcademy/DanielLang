@@ -5,15 +5,13 @@ const { read } = require("../reader/read");
 const { evaluate } = require("../interpreter/evaluate");
 const { print } = require("../printer/print");
 const { inputFinished, countIndent } = require("./utils");
-const { createGlobalEnv } = require("./global");
+const { global } = require("./global");
 
 const DO_OVER = Symbol("DO_OVER");
 
-const replEnv = createGlobalEnv();
-
 const REP = (input) => {
   const ast = read(input);
-  const result = evaluate(ast, replEnv);
+  const result = evaluate(ast, global);
   const output = print(result);
   console.log(output === "nil" ? "" : output);
 };

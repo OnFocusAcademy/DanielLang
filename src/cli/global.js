@@ -3,7 +3,7 @@ const { provides: core } = require("../../lib/js/core");
 const { makeFunction } = require("../runtime");
 const { evaluate } = require("../interpreter/evaluate");
 
-exports.createGlobalEnv = () => {
+const createGlobalEnv = () => {
   let env = Env.from(core);
 
   env.set(
@@ -13,3 +13,5 @@ exports.createGlobalEnv = () => {
 
   return env;
 };
+
+exports.global = createGlobalEnv();
