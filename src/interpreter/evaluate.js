@@ -108,7 +108,7 @@ const evalCall = (ast, env) => {
     // we're going to sloppily allow extra arguments to any function
     // because JS does and it's just easier that way
     fn.params.forEach((param, i) => {
-      if (fn.variadic && i === fn.length - 1) {
+      if (fn.variadic && i === fn.length) {
         fn.env.define(param, args.slice(i));
       } else {
         fn.env.define(param, args.get(i));
@@ -211,7 +211,7 @@ const makeLambda = (ast, env, name = "lambda") => {
   const restIdx = args.find((arg) => arg === "&");
   const variadic = restIdx > -1;
   const params = args.filter((arg) => arg !== "&");
-  const length = params.length;
+  const length = variadic ? params.length - 1 : params.length;
 
   return new Lambda(scope, params, variadic, blockBody, length, name);
 };

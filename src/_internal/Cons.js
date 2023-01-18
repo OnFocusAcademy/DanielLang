@@ -21,14 +21,14 @@ class Cons {
   /**
    * Returns the 1st element in a cons pair
    */
-  fst() {
+  first() {
     return this.head;
   }
 
   /**
    * Returns the 2nd element in a cons pair
    */
-  snd() {
+  last() {
     return this.tail;
   }
 

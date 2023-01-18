@@ -304,8 +304,7 @@ class List {
       return null;
     }
 
-    // eslint-disable-next-line
-    const [_, ...tail] = this;
+    const [, ...tail] = this;
     return list(...tail);
   }
 
@@ -327,11 +326,13 @@ class List {
  *
  * @param {Any} head
  * @param {Any} tail
- * @returns {Cons}
+ * @returns {Cons|null}
  */
 const cons = (head, tail) => {
   if (tail instanceof List) {
     return list(head, ...tail);
+  } else if (!head && !tail) {
+    return null;
   }
 
   return new Cons(head, tail);
