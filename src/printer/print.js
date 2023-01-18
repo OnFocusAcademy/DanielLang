@@ -3,7 +3,7 @@
  * @param {Any} obj
  * @returns {String}
  */
-const print = (obj, quoteString = true) => {
+const print = (obj, quoteString = false) => {
   // null or undefined
   if (obj == null) {
     return "nil";
@@ -22,7 +22,7 @@ const print = (obj, quoteString = true) => {
   }
 
   if (typeof obj === "string") {
-    return quoteString ? `"${obj}"` : obj;
+    return quoteString === true ? `"${obj}"` : obj;
   }
 
   if (typeof obj === "symbol") {
