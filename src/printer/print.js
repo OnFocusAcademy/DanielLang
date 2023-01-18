@@ -26,12 +26,9 @@ const print = (obj) => {
     if (str.startsWith('""') && str.endsWith('""') && str.length > 2) {
       return str.slice(1, -1);
     }
+    console.log(str.endsWith(require("os").EOL));
 
     return str;
-  }
-
-  if (typeof obj === "boolean" || typeof obj === "number") {
-    return obj;
   }
 
   if (typeof obj === "symbol") {
