@@ -50,11 +50,26 @@ exports.countIndent = (str) => {
 
 exports.readfile = (file, opts = { encoding: "utf8" }) => {
   if (opts instanceof Map) {
-    const optsObj = {};
-    for (let [k, v] of opts) {
-      optsObj[k] = v;
-    }
+    const optsObj = mapToObject(opts);
     return fs.readFileSync(file, optsObj);
   }
   return fs.readFileSync(file, opts);
 };
+
+exports.writefile = (file, data, opts = { encoding: "utf8" }) => {
+  if (opts instanceof Map) {
+    const optsObj = mapToObject(opts);
+    return fs.writeFileSync(file, data, optsObj);
+  }
+  return fs.writeFileSync(file, data, opts);
+};
+
+const mapToObject = (map) => {
+  const obj = {};
+  for (let [k, v] of map) {
+    obj[k] = v;
+  }
+  return obj;
+};
+
+exports.mapToObject = mapToObject;
