@@ -22,12 +22,7 @@ const print = (obj, quoteString = true) => {
   }
 
   if (typeof obj === "string") {
-    let str = `"${obj}"`;
-    if (str.startsWith('""') && str.endsWith('""') && str.length > 2) {
-      return str.slice(1, -1);
-    }
-
-    return quoteString ? obj : obj.slice(1, -1);
+    return quoteString ? `"${obj}"` : obj;
   }
 
   if (typeof obj === "symbol") {
