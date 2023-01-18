@@ -117,12 +117,9 @@ const evalCall = (ast, env) => {
     // Body is do block, using loop to eliminate at least 1 recursive call
     let value = null;
 
+    // skip do symbol
     for (let expr of fn.body.tail()) {
-      if (isList(expr)) {
-        value = evalList(expr, scope);
-      } else {
-        value = evaluate(expr, scope);
-      }
+      value = evaluate(expr, scope);
     }
 
     return value;
