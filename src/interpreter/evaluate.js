@@ -100,7 +100,7 @@ const evalCall = (ast, env) => {
     );
   }
 
-  args = list(args.map((arg) => evaluate(arg, env)));
+  args = args.map((arg) => evaluate(arg, env));
 
   if (fn.daniel) {
     // we're going to sloppily allow extra arguments to any function
