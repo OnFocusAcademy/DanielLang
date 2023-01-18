@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 /**
  * Check if the current input is a complete expression
  * @param {String} str
@@ -44,4 +46,15 @@ exports.countIndent = (str) => {
   }
 
   return indentCount;
+};
+
+exports.readfile = (file, opts = { encoding: "utf8" }) => {
+  if (opts instanceof Map) {
+    const optsObj = {};
+    for (let [k, v] of opts) {
+      optsObj[k] = v;
+    }
+    return fs.readFileSync(file, optsObj);
+  }
+  return fs.readFileSync(file, opts);
 };

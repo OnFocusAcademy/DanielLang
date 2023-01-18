@@ -1,3 +1,6 @@
+const chalk = require("chalk");
+const { isKeyword } = require("../interpreter/utils");
+
 /**
  * Print the result of any expression
  * @param {Any} obj
@@ -25,8 +28,20 @@ const print = (obj, quoteString = false) => {
     return quoteString === true ? `"${obj}"` : obj;
   }
 
+  if (isKeyword(obj)) {
+    return Symbol.keyFor(obj);
+  }
+
   if (typeof obj === "symbol") {
-    return `${Symbol.keyFor(obj)}`;
+    return chalk.blueBright(Symbol.keyFor(obj));
+  }
+
+  if (typeof obj === "number") {
+    return chalk.yellowBright(String(obj));
+  }
+
+  if (typeof obj === "boolean") {
+    return chalk.greenBright(String(obj));
   }
 
   return String(obj);
