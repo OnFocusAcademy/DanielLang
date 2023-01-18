@@ -85,6 +85,22 @@ exports.Env = class Env {
   }
 
   /**
+   * Get the current environment's name, namespaced with the names of its parents
+   * @returns {String}
+   */
+  getName() {
+    let parent = this.parent;
+    let fqn = "";
+
+    while (parent) {
+      fqn = `${parent.name}.${fqn}`;
+      parent = parent.parent;
+    }
+
+    return fqn + this.name;
+  }
+
+  /**
    * Checks if the current env's namespace contains key
    * @param {Symbol} key
    * @returns {Boolean}
