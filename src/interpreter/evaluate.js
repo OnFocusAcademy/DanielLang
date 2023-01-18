@@ -105,7 +105,8 @@ const evalCall = (ast, env) => {
   args = list(args.map((arg) => evaluate(arg, env)));
 
   if (fn.daniel) {
-    // { env: scope, params, variadic, blockBody, length, __name__: name }
+    // we're going to sloppily allow extra arguments to any function
+    // because JS does and it's just easier that way
     fn.params.forEach((param, i) => {
       if (fn.variadic && i === fn.length - 1) {
         fn.env.define(param, args.slice(i));
