@@ -4,7 +4,12 @@
  * @returns {String}
  */
 const print = (obj) => {
-  if (obj?.isList && obj.isList()) {
+  // null or undefined
+  if (obj == null) {
+    return "nil";
+  }
+
+  if (obj.isList && obj.isList()) {
     return printList(obj);
   }
 
@@ -14,11 +19,6 @@ const print = (obj) => {
 
   if (typeof obj === "function" || obj.daniel) {
     return `Function ${obj.__name__}`;
-  }
-
-  // null or undefined
-  if (obj == null) {
-    return "nil";
   }
 
   if (typeof obj === "string") {
