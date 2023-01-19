@@ -379,7 +379,7 @@ const quasiquote = (ast, env) => {
         return list(Symbol.for("cons"), quasiquote(el, env), l);
       }
 
-      return ast instanceof Map || typeof ast === "symbol" || !isKeyword(ast)
+      return ast instanceof Map || (typeof ast === "symbol" && !isKeyword(ast))
         ? list(Symbol.for("quote"), ast)
         : ast;
     }, new List());
