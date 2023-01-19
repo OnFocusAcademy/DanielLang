@@ -3,13 +3,7 @@ const { isList, List, list, cons } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
-const { Lambda } = require("./Lambda");
-const {
-  isKeyword,
-  isTruthy,
-  isSelfQuoting,
-  evalDanielFuncCall,
-} = require("./utils");
+const { isKeyword, isTruthy, isSelfQuoting } = require("./utils");
 /**
  * Evaluate an AST as code
  * @param {import("../reader/read").AST} ast
@@ -112,17 +106,13 @@ const evalCall = (ast, env) => {
 
   fn = evaluate(fn, env);
 
-  if (typeof fn !== "function" && !fn.daniel) {
+  if (typeof fn !== "function") {
     throw new Error(
       `Call expression callee must be a function; ${typeof fn} given`
     );
   }
 
   args = args.map((arg) => evaluate(arg, env));
-
-  if (fn.daniel) {
-    return evalDanielFuncCall(fn, evaluate, ...args);
-  }
 
   return fn(...args);
 };
@@ -225,11 +215,48 @@ const makeLambda = (ast, env, name = "lambda") => {
   const variadic = restIdx > -1;
   const params = args.filter((arg) => arg !== "&");
   const length = variadic ? params.length - 1 : params.length;
-  const fn = new Lambda(env, params, variadic, blockBody, length, name);
-  const danielFn = (...args) => evalDanielFuncCall(fn, evaluate, ...args);
+  const danielFn = (...args) => {
+    /**
+     * @type {Env}
+     */
+    const scope = env.extend(name);
+    // we're going to sloppily allow extra arguments to any function
+    // because JS does and it's just easier that way
+    params.forEach((param, i) => {
+      if (variadic && i === length) {
+        scope.define(param, args.slice(i));
+      } else {
+        scope.define(param, args[i]);
+      }
+    });
+
+    // Body is do block, using loop to eliminate at least 1 recursive call
+    let value = null;
+
+    // skip do symbol
+    for (let expr of blockBody.tail()) {
+      // avoid recursive calls to evaluate as much as possible
+      // so we can have more recursion with in-language
+      // functions before we blow the stack - I think
+      // this is as close to TCO as we can get
+      if (isSelfQuoting(expr)) {
+        value = expr;
+      } else if (typeof expr === "symbol") {
+        value = scope.get(expr);
+      } else if (isList(expr)) {
+        value = evalList(expr, scope);
+      } else {
+        value = evaluate(expr, scope);
+      }
+    }
+
+    return value;
+  };
 
   danielFn.daniel = true;
-  danielFn.name = name;
+  danielFn.__name__ = name;
+  danielFn.__length__ = length;
+
   return danielFn;
 };
 
@@ -250,9 +277,8 @@ const evalFuncDef = (ast, env) => {
   }
 
   const fn = makeLambda(list(args, body), env, Symbol.keyFor(name));
-  const danielFn = (...args) => evalDanielFuncCall(fn, evaluate, ...args);
 
-  env.define(name, danielFn);
+  env.define(name, fn);
 };
 
 /**

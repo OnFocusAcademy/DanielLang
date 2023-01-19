@@ -20,8 +20,8 @@ const print = (obj, quoteString = false) => {
     return printMap(obj);
   }
 
-  if (typeof obj === "function" || obj.daniel) {
-    return `Function ${obj.__name__}`;
+  if (typeof obj === "function") {
+    return `Function ${obj.__name__ ? obj.__name__ : obj.name}`;
   }
 
   if (typeof obj === "string") {
