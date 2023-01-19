@@ -42,6 +42,6 @@ exports.run = (argv) => {
 
     default:
       global.set(Symbol.for("argv"), argv);
-      repl();
+      repl(global);
   }
 };
