@@ -9,7 +9,7 @@ const { isKeyword } = require("../interpreter/utils");
 const print = (obj, quoteString = false) => {
   // null or undefined
   if (obj == null) {
-    return "()";
+    return "nil";
   }
 
   if (obj.isList && obj.isList()) {
@@ -53,7 +53,7 @@ const print = (obj, quoteString = false) => {
  * @returns {String}
  */
 const printList = (list) =>
-  list.length ? `(${list.map(print).join(" ")})` : "()";
+  list.length ? `(${list.map(print).join(" ")})` : "nil";
 
 /**
  * Print a map
