@@ -1,4 +1,3 @@
-const { mapToObject } = require("../cli/utils");
 const { getAllOwnKeys } = require("../utils");
 
 /**
@@ -144,6 +143,12 @@ exports.Env = class Env {
   }
 
   toModule() {
-    return mapToObject(this.namespace);
+    let mod = {};
+
+    for (let [k, v] of this.namespace) {
+      mod[Symbol.keyFor(k)] = v;
+    }
+
+    return mod;
   }
 };

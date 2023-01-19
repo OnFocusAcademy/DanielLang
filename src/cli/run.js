@@ -17,13 +17,14 @@ exports.run = (argv) => {
             ? path.join(process.cwd(), pathString)
             : pathString
         );
+
+        global.set(Symbol.for("argv"), argv);
         const moduleName = path.basename(pathString).split(".")[0];
         const moduleEnv = global.extend(moduleName);
 
         evaluate(read(code), moduleEnv);
         const namespace = moduleEnv.toModule();
         global.set(Symbol.for(moduleName), namespace);
-        global.set(Symbol.for("argv"), argv);
 
         repl(global);
         break;
