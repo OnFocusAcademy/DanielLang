@@ -19,7 +19,7 @@ exports.run = (argv) => {
         );
 
         global.set(Symbol.for("argv"), argv);
-        const moduleName = path.basename(pathString).split(".")[0];
+        const moduleName = `__${path.basename(pathString).split(".")[0]}__`;
         const moduleEnv = global.extend(moduleName);
 
         evaluate(read(code), moduleEnv);
