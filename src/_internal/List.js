@@ -246,8 +246,9 @@ class List {
   reduceRight(fn, init) {
     let accum = init;
 
-    for (let i = this.length - 1; i === 0; i--) {
+    for (let i = this.length - 1; i >= 0; i--) {
       accum = fn.call(null, accum, this.get(i), i, this);
+      console.log(accum);
     }
 
     return accum;

@@ -366,18 +366,14 @@ const quasiquote = (ast, env) => {
   if (isList(ast)) {
     const head = ast.first();
     if (head === Symbol.for("unquote")) {
-      return evaluate(ast.tail(), env);
+      return evaluate(ast.get(1), env);
     }
 
-    return ast.tail().reduceRight((l, el) => {
-      if (isList(el)) {
-        const head = el.first();
-        if (head === Symbol.for("splice-unquote")) {
-          return list(Symbol.for("concat"), el.tail(), l);
-        }
-
-        return list(Symbol.for("cons"), quasiquote(el, env), l);
+    return ast.reduceRight((l, el) => {
+      if (isList(el) && el.first() === Symbol.for("splice-unquote")) {
+        return list(...el.tail(), ...l);
       }
+      return list(quasiquote(el, env), ...l);
     }, new List());
   }
 
