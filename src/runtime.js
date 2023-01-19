@@ -15,7 +15,7 @@ class Module {
     this.__name__ = name;
 
     for (let key of getAllOwnKeys(provides)) {
-      this[key] = provides[key];
+      this[typeof key === "symbol" ? Symbol.keyFor(key) : key] = provides[key];
     }
   }
 
