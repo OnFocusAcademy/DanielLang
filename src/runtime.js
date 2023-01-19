@@ -50,4 +50,10 @@ const makeFunction = (
   return func;
 };
 
-module.exports = { makeModule, makeFunction };
+class Exception extends Error {
+  constructor(message) {
+    super(message);
+  }
+}
+
+module.exports = { makeModule, makeFunction, Exception };
