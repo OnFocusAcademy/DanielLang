@@ -377,7 +377,7 @@ const quasiquote = (ast, env) => {
     }, new List());
   }
 
-  return ast instanceof Map || (typeof ast === "symbol" && !isKeyword(ast))
+  return typeof ast === "symbol" && !isKeyword(ast)
     ? list(Symbol.for("quote"), ast)
     : ast;
 };
