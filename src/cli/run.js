@@ -6,19 +6,41 @@ const { global } = require("./global");
 const { readfile } = require("./utils");
 
 exports.run = (argv) => {
-  switch (typeof argv[0]) {
+  const [fst] = argv;
+
+  switch (typeof fst) {
     case "string": {
-      const [pathString] = argv[0];
+      if (fst === "-i") {
+        const [, pathString] = argv;
+        const code = readfile(
+          pathString.startsWith("//")
+            ? path.join(process.cwd(), pathString)
+            : pathString
+        );
+        const moduleName = path.basename(pathString).split(".")[0];
+        const moduleEnv = global.extend(moduleName);
+
+        evaluate(read(code), moduleEnv);
+        const namespace = moduleEnv.toModule();
+        global.set(Symbol.for(moduleName), namespace);
+        global.set(Symbol.for("argv"), argv);
+
+        repl(global);
+        break;
+      }
+      const pathString = fst;
       const code = readfile(
         pathString.startsWith("//")
           ? path.join(process.cwd(), pathString)
           : pathString
       );
-      let env = global.extend("<main>");
+      global.set(Symbol.for("argv"), argv);
+      let env = global.extend("__main__");
       return evaluate(read(code), env);
     }
 
     default:
+      global.set(Symbol.for("argv"), argv);
       repl();
   }
 };

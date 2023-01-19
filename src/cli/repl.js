@@ -5,7 +5,6 @@ const { read } = require("../reader/read");
 const { evaluate } = require("../interpreter/evaluate");
 const { print } = require("../printer/print");
 const { inputFinished, countIndent } = require("./utils");
-const { global } = require("./global");
 
 const DO_OVER = Symbol("DO_OVER");
 
@@ -18,11 +17,11 @@ const getInput = (prompt) => {
   }
 };
 
-const repl = () => {
+const repl = (globalEnv) => {
   let prompt = "> ";
   let input = "";
   let indent = 0;
-  let main = global.extend("<main>");
+  let main = globalEnv.extend("__main__");
 
   const REP = (input) => {
     const ast = read(input);

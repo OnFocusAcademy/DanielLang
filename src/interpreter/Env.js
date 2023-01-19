@@ -1,3 +1,4 @@
+const { mapToObject } = require("../cli/utils");
 const { getAllOwnKeys } = require("../utils");
 
 /**
@@ -13,10 +14,11 @@ exports.Env = class Env {
    * @param {Env|null} params.parent
    * @param {String} params.name
    */
-  constructor({ parent = null, name = "global" } = {}) {
+  constructor({ parent = null, name = "__global__" } = {}) {
     this.parent = parent;
     this.name = name;
     this.namespace = new Map();
+    this.set(Symbol.for("__module__"), name);
   }
 
   /**
@@ -27,7 +29,7 @@ exports.Env = class Env {
    * @param {String} params.name
    * @returns {Env}
    */
-  static from(vars, { parent = null, name = "global" } = {}) {
+  static from(vars, { parent = null, name = "__global__" } = {}) {
     let env = new Env({ parent, name });
 
     env.addMany(vars);
@@ -139,5 +141,9 @@ exports.Env = class Env {
   set(key, value) {
     this.namespace.set(key, value);
     return this.namespace.has(key);
+  }
+
+  toModule() {
+    return mapToObject(this.namespace);
   }
 };
