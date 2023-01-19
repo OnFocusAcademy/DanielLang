@@ -57,7 +57,7 @@ const evalList = (ast, env) => {
     case Forms.Quote:
       return ast.get(1);
     case Forms.QuasiQuote:
-      return quasiquote(ast, env);
+      return quasiquote(ast.get(1), env);
     default:
       return evalCall(ast, env);
   }
@@ -378,12 +378,12 @@ const quasiquote = (ast, env) => {
 
         return list(Symbol.for("cons"), quasiquote(el, env), l);
       }
-
-      return ast instanceof Map || (typeof ast === "symbol" && !isKeyword(ast))
-        ? list(Symbol.for("quote"), ast)
-        : ast;
     }, new List());
   }
+
+  return ast instanceof Map || (typeof ast === "symbol" && !isKeyword(ast))
+    ? list(Symbol.for("quote"), ast)
+    : ast;
 };
 
 exports.evaluate = evaluate;
