@@ -47,16 +47,16 @@ const readForm = (reader) => {
     // reader macros
     case TokenTypes.Quote:
       reader.skip();
-      return list(Symbol.for("quote"), readForm(reader));
+      return list(Symbol.for("quote"), readExpr(reader));
     case TokenTypes.QQuote:
       reader.skip();
-      return list(Symbol.for("quasiquote"), readForm(reader));
+      return list(Symbol.for("quasiquote"), readExpr(reader));
     case TokenTypes.UQuote:
       reader.skip();
-      return list(Symbol.for("unquote"), readForm(reader));
+      return list(Symbol.for("unquote"), readExpr(reader));
     case TokenTypes.SUQuote:
       reader.skip();
-      return list(Symbol.for("splicing-unquote"), readForm(reader));
+      return list(Symbol.for("splicing-unquote"), readExpr(reader));
 
     // list ending delimiters without matching opening tokens
     case TokenTypes.RParen:
@@ -88,7 +88,7 @@ const readForm = (reader) => {
   }
 };
 
-const getPrec = (token) => (token.type === TokenTypes.Dot ? 90 : 0);
+const getPrec = (token) => (token?.type === TokenTypes.Dot ? 90 : 0);
 
 /**
  * Reads to see if it's a member expression
@@ -102,6 +102,8 @@ const readExpr = (reader, bp = 0) => {
   let prec = getPrec(token);
 
   while (bp < prec) {
+    // the only time this will happen is if there's a dot
+    reader.skip();
     // property must always be a valid symbol
     left = list(Symbol.for("prop"), Symbol.keyFor(readAtom(reader)), left);
     prec = getPrec(reader.peek());
@@ -174,7 +176,7 @@ const read = (input) => {
   const ast = list(Symbol.for("do"));
 
   while (!reader.eof()) {
-    ast.append(readForm(reader));
+    ast.append(readExpr(reader));
   }
 
   return ast;
