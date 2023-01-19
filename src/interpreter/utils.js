@@ -1,8 +1,9 @@
 const isKeyword = (obj) =>
   typeof obj === "symbol" && obj.description.startsWith(":");
 exports.isKeyword = isKeyword;
-exports.isFalsy = (val) => val === false || val == null;
-exports.isTruthy = (val) => !this.isFalsy(val);
+const isFalsy = (val) => val === false || val == null;
+exports.isFalsy = isFalsy;
+exports.isTruthy = (val) => isFalsy(val);
 
 // Self-quoting data is AST data that evaluates to itself, i.e.
 // doesn't have to be looked up in an environment. Native
