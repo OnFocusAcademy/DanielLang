@@ -13,4 +13,5 @@ exports.Forms = {
   ForList: "for/list",
   Quote: "quote",
   QuasiQuote: "quasiquote",
+  DefMacro: "defmacro",
 };

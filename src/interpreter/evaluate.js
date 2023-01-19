@@ -57,6 +57,8 @@ const evalList = (ast, env) => {
       return ast.get(1);
     case Forms.QuasiQuote:
       return quasiquote(ast.get(1), env);
+    case Forms.DefMacro:
+      return evalDefMacro(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -208,7 +210,7 @@ const evalLambda = (ast, env) => {
  * @param {String} [name=lambda]
  * @returns {Lambda}
  */
-const makeLambda = (ast, env, name = "lambda") => {
+const makeLambda = (ast, env, name = "lambda", isMacro = false) => {
   const [args, ...body] = ast;
   const blockBody = list(Symbol.for("do"), ...body);
   const restIdx = args.findIndex((arg) => arg === "&");
@@ -256,6 +258,7 @@ const makeLambda = (ast, env, name = "lambda") => {
   danielFn.daniel = true;
   danielFn.__name__ = name;
   danielFn.__length__ = length;
+  danielFn.isMacro = isMacro;
 
   return danielFn;
 };
@@ -265,7 +268,7 @@ const makeLambda = (ast, env, name = "lambda") => {
  * @param {List} ast
  * @param {Env} env
  */
-const evalFuncDef = (ast, env) => {
+const evalFuncDef = (ast, env, isMacro = false) => {
   const [, header, body] = ast;
   const name = header.first();
   const args = header.tail();
@@ -276,7 +279,7 @@ const evalFuncDef = (ast, env) => {
     );
   }
 
-  const fn = makeLambda(list(args, body), env, Symbol.keyFor(name));
+  const fn = makeLambda(list(args, body), env, Symbol.keyFor(name), isMacro);
 
   env.define(name, fn);
 };
@@ -371,6 +374,15 @@ const quasiquote = (ast, env) => {
   return typeof ast === "symbol" && !isKeyword(ast)
     ? list(Symbol.for("quote"), ast)
     : ast;
+};
+
+/**
+ * Defines a macro
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalDefMacro = (ast, env) => {
+  return evalFuncDef(ast, env, true);
 };
 
 exports.evaluate = evaluate;
