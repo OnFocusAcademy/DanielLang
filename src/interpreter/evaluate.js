@@ -4,7 +4,12 @@ const { isList, List, list, cons } = require("../_internal/List");
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
 const { Lambda } = require("./Lambda");
-const { isKeyword, isTruthy, isSelfQuoting } = require("./utils");
+const {
+  isKeyword,
+  isTruthy,
+  isSelfQuoting,
+  evalDanielFuncCall,
+} = require("./utils");
 /**
  * Evaluate an AST as code
  * @param {import("../reader/read").AST} ast
@@ -116,49 +121,10 @@ const evalCall = (ast, env) => {
   args = args.map((arg) => evaluate(arg, env));
 
   if (fn.daniel) {
-    return evalDanielFuncCall({ fn, env }, ...args);
+    return evalDanielFuncCall(fn, evaluate, ...args);
   }
 
   return fn(...args);
-};
-
-const evalDanielFuncCall = ({ ast = null, env, fn = null }, ...args) => {
-  fn = fn ?? evaluate(ast, env);
-  /**
-   * @type {Env}
-   */
-  const scope = fn.env.extend(fn.__name__);
-  // we're going to sloppily allow extra arguments to any function
-  // because JS does and it's just easier that way
-  fn.params.forEach((param, i) => {
-    if (fn.variadic && i === fn.length) {
-      scope.define(param, args.slice(i));
-    } else {
-      scope.define(param, args[i]);
-    }
-  });
-
-  // Body is do block, using loop to eliminate at least 1 recursive call
-  let value = null;
-
-  // skip do symbol
-  for (let expr of fn.body.tail()) {
-    // avoid recursive calls to evaluate as much as possible
-    // so we can have more recursion with in-language
-    // functions before we blow the stack - I think
-    // this is as close to TCO as we can get
-    if (isSelfQuoting(expr)) {
-      value = expr;
-    } else if (typeof expr === "symbol") {
-      value = scope.get(expr);
-    } else if (isList(expr)) {
-      value = evalList(expr, scope);
-    } else {
-      value = evaluate(expr, scope);
-    }
-  }
-
-  return value;
 };
 
 /**
@@ -259,14 +225,12 @@ const makeLambda = (ast, env, name = "lambda") => {
   const variadic = restIdx > -1;
   const params = args.filter((arg) => arg !== "&");
   const length = variadic ? params.length - 1 : params.length;
-
   const fn = new Lambda(env, params, variadic, blockBody, length, name);
+  const danielFn = (...args) => evalDanielFuncCall(fn, evaluate, ...args);
 
-  fn.call = function (ctx, ...args) {
-    return evalDanielFuncCall({ fn, env }, ...args);
-  };
-
-  return fn;
+  danielFn.daniel = true;
+  danielFn.name = name;
+  return danielFn;
 };
 
 /**
@@ -286,8 +250,9 @@ const evalFuncDef = (ast, env) => {
   }
 
   const fn = makeLambda(list(args, body), env, Symbol.keyFor(name));
+  const danielFn = (...args) => evalDanielFuncCall(fn, evaluate, ...args);
 
-  env.define(name, fn);
+  env.define(name, danielFn);
 };
 
 /**

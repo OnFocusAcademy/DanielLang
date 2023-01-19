@@ -78,7 +78,7 @@ class List {
 
     let i = 0;
     for (let value of this) {
-      if (fn.call(null, value, i, this)) {
+      if (fn(value, i, this)) {
         filtered.append(value);
       }
 
@@ -95,7 +95,7 @@ class List {
   findIndex(search) {
     let i = 0;
     for (let value of this) {
-      if (search.call(null, value)) {
+      if (search(value)) {
         return i;
       }
       i++;
@@ -118,7 +118,7 @@ class List {
   forEach(fn) {
     let i = 0;
     for (let value of this) {
-      fn.call(null, value, i++, this);
+      fn(value, i++, this);
     }
   }
 
@@ -202,7 +202,7 @@ class List {
 
     let i = 0;
     for (let value of this) {
-      mapped.append(fn.call(null, value, i++, this));
+      mapped.append(fn(value, i++, this));
     }
 
     return mapped.length ? mapped : null;
@@ -231,7 +231,7 @@ class List {
 
     let i = 0;
     for (let value of this) {
-      accum = fn.call(null, accum, value, i, this);
+      accum = fn(accum, value, i, this);
       i++;
     }
 
@@ -247,7 +247,7 @@ class List {
     let accum = init;
 
     for (let i = this.length - 1; i >= 0; i--) {
-      accum = fn.call(null, accum, this.get(i), i, this);
+      accum = fn(accum, this.get(i), i, this);
       console.log(accum);
     }
 
