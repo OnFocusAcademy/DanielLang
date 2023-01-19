@@ -88,6 +88,28 @@ const readForm = (reader) => {
   }
 };
 
+const getPrec = (token) => (token.type === TokenTypes.Dot ? 90 : 0);
+
+/**
+ * Reads to see if it's a member expression
+ * @param {Reader} reader
+ * @param {Number} bp
+ */
+const readExpr = (reader, bp = 0) => {
+  let left = readForm(reader);
+  const token = reader.peek();
+
+  let prec = getPrec(token);
+
+  while (bp < prec) {
+    // property must always be a valid symbol
+    left = list(Symbol.for("prop"), Symbol.keyFor(readAtom(reader)), left);
+    prec = getPrec(reader.peek());
+  }
+
+  return left;
+};
+
 /**
  * Reads a list form into a Daniel data structure
  * @param {Reader} reader
@@ -110,7 +132,7 @@ const readList = (reader, start, end) => {
       throw new Error(`Expected ${end}; got EOF`);
     }
 
-    ast.append(readForm(reader));
+    ast.append(readExpr(reader));
     token = reader.peek();
   }
 
