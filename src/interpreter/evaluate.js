@@ -54,6 +54,10 @@ const evalList = (ast, env) => {
       return evalFor(ast, env);
     case Forms.ForList:
       return evalForList(ast, env);
+    case Forms.Quote:
+      return ast.get(1);
+    case Forms.QuasiQuote:
+      return quasiquote(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -351,6 +355,35 @@ const evalForList = (ast, env) => {
   }
 
   return l;
+};
+
+/**
+ * Quasiquote
+ * @param {List} ast
+ * @param {Env} env
+ */
+const quasiquote = (ast, env) => {
+  if (isList(ast)) {
+    const head = ast.first();
+    if (head === Symbol.for("unquote")) {
+      return evaluate(ast.tail(), env);
+    }
+
+    ast.tail().reduceRight((l, el) => {
+      if (isList(el)) {
+        const head = el.first();
+        if (head === Symbol.for("splice-unquote")) {
+          return list(Symbol.for("concat"), el.tail(), l);
+        }
+
+        return list(Symbol.for("cons"), quasiquote(el, env), l);
+      }
+
+      return ast instanceof Map || typeof ast === "symbol" || !isKeyword(ast)
+        ? list(Symbol.for("quote"), ast)
+        : ast;
+    }, new List());
+  }
 };
 
 exports.evaluate = evaluate;

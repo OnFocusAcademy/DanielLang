@@ -11,4 +11,6 @@ exports.Forms = {
   Set: "set!",
   For: "for",
   ForList: "for/list",
+  Quote: "quote",
+  QuasiQuote: "quasiquote",
 };

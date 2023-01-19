@@ -239,6 +239,21 @@ class List {
   }
 
   /**
+   * Reduce the current list backwards
+   * @param {Function} fn reducer
+   * @param {Any} init initial accumulator value
+   */
+  reduceRight(fn, init) {
+    let accum = init;
+
+    for (let i = this.length - 1; i === 0; i--) {
+      accum = fn.call(null, accum, this.get(i), i, this);
+    }
+
+    return accum;
+  }
+
+  /**
    * Sets the list item at element key, returns false if key does not exist
    * @param {Number} key
    * @param {Any} val
