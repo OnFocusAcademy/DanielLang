@@ -32,11 +32,54 @@ const evaluate = (ast, env) => {
 };
 
 /**
+ * Determines if an AST value is a macro call
+ * @param {import("../reader/read").AST} ast
+ * @param {Env} env
+ */
+const isMacroCall = (ast, env) => {
+  if (isList(ast)) {
+    const [first] = ast;
+
+    if (typeof first === "symbol" && !isKeyword(first)) {
+      return env.has(first) && env.get(first)?.isMacro === true;
+    }
+  }
+
+  return false;
+};
+
+/**
+ * Expand macros into AST
+ * @param {import("../reader/read").AST} ast
+ * @param {Env} env
+ */
+const macroexpand = (ast, env) => {
+  while (isMacroCall(ast, env)) {
+    const [name] = ast;
+    let macro = env.get(name);
+
+    ast = macro(...ast.tail());
+  }
+
+  return ast;
+};
+
+/**
  * Evaluate a list form
  * @param {List} ast
  */
 const evalList = (ast, env) => {
-  const [fst] = ast;
+  ast = macroexpand(ast, env);
+
+  if (!isList(ast)) {
+    return ast;
+  }
+
+  let [fst] = ast;
+
+  if (isList(fst)) {
+    fst = evalList(fst, env);
+  }
 
   switch (fst.description) {
     case Forms.Do:
@@ -59,6 +102,8 @@ const evalList = (ast, env) => {
       return quasiquote(ast.get(1), env);
     case Forms.DefMacro:
       return evalDefMacro(ast, env);
+    case Forms.Macroexpand:
+      return macroexpand(ast.tail(), env);
     default:
       return evalCall(ast, env);
   }
@@ -106,7 +151,7 @@ const evalSymbol = (ast, env) => {
 const evalCall = (ast, env) => {
   let [fn, ...args] = ast;
 
-  fn = evaluate(fn, env);
+  fn = typeof fn === "function" ? fn : evaluate(fn, env);
 
   if (typeof fn !== "function") {
     throw new Error(
@@ -365,7 +410,7 @@ const quasiquote = (ast, env) => {
 
     return ast.reduceRight((l, el) => {
       if (isList(el) && el.first() === Symbol.for("splice-unquote")) {
-        return list(...el.tail(), ...l);
+        return list(Symbol.for("cons"), el.get(1), l);
       }
       return list(quasiquote(el, env), ...l);
     }, new List());

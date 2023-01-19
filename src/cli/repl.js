@@ -28,7 +28,7 @@ const repl = () => {
     const ast = read(input);
     const result = evaluate(ast, main);
     const output = print(result);
-    console.log(output === "nil" ? "" : output);
+    console.log(output);
   };
 
   // eslint-disable-next-line

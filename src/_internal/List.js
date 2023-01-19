@@ -248,7 +248,6 @@ class List {
 
     for (let i = this.length - 1; i >= 0; i--) {
       accum = fn(accum, this.get(i), i, this);
-      console.log(accum);
     }
 
     return accum;

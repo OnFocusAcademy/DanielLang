@@ -14,4 +14,5 @@ exports.Forms = {
   Quote: "quote",
   QuasiQuote: "quasiquote",
   DefMacro: "defmacro",
+  Macroexpand: "macroexpand",
 };
