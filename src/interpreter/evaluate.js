@@ -4,7 +4,7 @@ const { isList, List, list, cons } = require("../_internal/List");
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
 const { Lambda } = require("./Lambda");
-const { isKeyword, isTruthy } = require("./utils");
+const { isKeyword, isTruthy, isSelfQuoting } = require("./utils");
 /**
  * Evaluate an AST as code
  * @param {import("../reader/read").AST} ast
@@ -69,7 +69,16 @@ const evalDoBlock = (ast, env) => {
   const exprs = ast.tail();
 
   for (let expr of exprs) {
-    value = evaluate(expr, env);
+    if (isSelfQuoting(expr)) {
+      value = expr;
+    } else if (typeof expr === "symbol") {
+      value = env.get(expr);
+    } else if (isList(expr)) {
+      value = evalList(expr, env);
+    } else {
+      // will we ever get here?
+      value = evaluate(expr, env);
+    }
   }
 
   return value;
@@ -103,29 +112,49 @@ const evalCall = (ast, env) => {
   args = args.map((arg) => evaluate(arg, env));
 
   if (fn.daniel) {
-    const scope = fn.env.extend(fn.__name__);
-    // we're going to sloppily allow extra arguments to any function
-    // because JS does and it's just easier that way
-    fn.params.forEach((param, i) => {
-      if (fn.variadic && i === fn.length) {
-        scope.define(param, args.slice(i));
-      } else {
-        scope.define(param, args[i]);
-      }
-    });
-
-    // Body is do block, using loop to eliminate at least 1 recursive call
-    let value = null;
-
-    // skip do symbol
-    for (let expr of fn.body.tail()) {
-      value = evaluate(expr, scope);
-    }
-
-    return value;
+    return evalDanielFuncCall({ fn, env }, ...args);
   }
 
   return fn(...args);
+};
+
+const evalDanielFuncCall = ({ ast = null, env, fn = null }, ...args) => {
+  fn = fn ?? evaluate(ast, env);
+  /**
+   * @type {Env}
+   */
+  const scope = fn.env.extend(fn.__name__);
+  // we're going to sloppily allow extra arguments to any function
+  // because JS does and it's just easier that way
+  fn.params.forEach((param, i) => {
+    if (fn.variadic && i === fn.length) {
+      scope.define(param, args.slice(i));
+    } else {
+      scope.define(param, args[i]);
+    }
+  });
+
+  // Body is do block, using loop to eliminate at least 1 recursive call
+  let value = null;
+
+  // skip do symbol
+  for (let expr of fn.body.tail()) {
+    // avoid recursive calls to evaluate as much as possible
+    // so we can have more recursion with in-language
+    // functions before we blow the stack - I think
+    // this is as close to TCO as we can get
+    if (isSelfQuoting(expr)) {
+      value = expr;
+    } else if (typeof expr === "symbol") {
+      value = scope.get(expr);
+    } else if (isList(expr)) {
+      value = evalList(expr, scope);
+    } else {
+      value = evaluate(expr, scope);
+    }
+  }
+
+  return value;
 };
 
 /**
@@ -177,10 +206,30 @@ const evalIf = (ast, env) => {
   const [, cond, then, orElse] = ast;
 
   if (isTruthy(evaluate(cond, env))) {
-    return evaluate(then, env);
+    // then branch
+    if (isSelfQuoting(then)) {
+      return then;
+    } else if (typeof then === "symbol") {
+      return env.get(then);
+    } else if (isList(then)) {
+      return evalList(then, env);
+    } else {
+      // will we ever get here?
+      return evaluate(then, env);
+    }
   }
 
-  return evaluate(orElse, env);
+  // else branch
+  if (isSelfQuoting(orElse)) {
+    return orElse;
+  } else if (typeof orElse === "symbol") {
+    return env.get(orElse);
+  } else if (isList(orElse)) {
+    return evalList(orElse, env);
+  } else {
+    // will we ever get here?
+    return evaluate(orElse, env);
+  }
 };
 
 /**
@@ -207,7 +256,13 @@ const makeLambda = (ast, env, name = "lambda") => {
   const params = args.filter((arg) => arg !== "&");
   const length = variadic ? params.length - 1 : params.length;
 
-  return new Lambda(env, params, variadic, blockBody, length, name);
+  const fn = new Lambda(env, params, variadic, blockBody, length, name);
+
+  fn.call = function (ctx, ...args) {
+    return evalDanielFuncCall({ fn, env }, ...args);
+  };
+
+  return fn;
 };
 
 /**
@@ -245,7 +300,18 @@ const evalFor = (ast, env) => {
 
   for (let value of iterator) {
     env.set(name, iterator instanceof Map ? cons(value[0], value[1]) : value);
-    retVal = evaluate(blockBody, env);
+    for (let expr of blockBody) {
+      if (isSelfQuoting(expr)) {
+        return expr;
+      } else if (typeof expr === "symbol") {
+        return env.get(expr);
+      } else if (isList(expr)) {
+        return evalList(expr, env);
+      } else {
+        // will we ever get here?
+        return evaluate(expr, env);
+      }
+    }
   }
 
   return retVal;
@@ -266,10 +332,21 @@ const evalForList = (ast, env) => {
 
   for (let value of iterator) {
     env.set(name, value);
-    const predicate = predAST?.length > 0 ? evaluate(predAST, env) : true;
+    for (let expr of blockBody) {
+      const predicate = predAST?.length > 0 ? evaluate(predAST, env) : true;
 
-    if (predicate) {
-      l.append(evaluate(blockBody, env));
+      if (predicate) {
+        if (isSelfQuoting(expr)) {
+          l.append(expr);
+        } else if (typeof expr === "symbol") {
+          l.append(env.get(expr));
+        } else if (isList(expr)) {
+          l.append(evalList(expr, env));
+        } else {
+          // will we ever get here?
+          l.append(evaluate(expr, env));
+        }
+      }
     }
   }
 
