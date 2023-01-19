@@ -369,7 +369,7 @@ const quasiquote = (ast, env) => {
       return evaluate(ast.tail(), env);
     }
 
-    ast.tail().reduceRight((l, el) => {
+    return ast.tail().reduceRight((l, el) => {
       if (isList(el)) {
         const head = el.first();
         if (head === Symbol.for("splice-unquote")) {
