@@ -8,14 +8,6 @@ const { inputFinished, countIndent } = require("./utils");
 const { global } = require("./global");
 
 const DO_OVER = Symbol("DO_OVER");
-const main = global.extend("main");
-
-const REP = (input) => {
-  const ast = read(input);
-  const result = evaluate(ast, main);
-  const output = print(result, false);
-  console.log(output);
-};
 
 const getInput = (prompt) => {
   try {
@@ -30,6 +22,14 @@ const repl = () => {
   let prompt = "> ";
   let input = "";
   let indent = 0;
+  let main = global.extend("<main>");
+
+  const REP = (input) => {
+    const ast = read(input);
+    const result = evaluate(ast, main);
+    const output = print(result);
+    console.log(output === "nil" ? "" : output);
+  };
 
   // eslint-disable-next-line
   while (true) {

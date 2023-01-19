@@ -1,5 +1,3 @@
 #! /usr/bin/env node
 
-const { repl } = require("../src/cli/repl");
-
-repl();
+require("../src/cli/run").run(process.argv.slice(2));
