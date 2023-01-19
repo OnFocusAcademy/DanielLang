@@ -22,5 +22,6 @@ exports.TokenTypes = {
   UQuote: "UQuote",
   SUQuote: "SUQuote",
   Amp: "Amp",
+  Dot: "Dot",
   Hash: "Hash",
 };

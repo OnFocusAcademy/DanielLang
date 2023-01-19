@@ -4,9 +4,8 @@ exports.isDigit = (ch) => /[0-9]/.test(ch);
 exports.isHexDigit = (ch) => /[0-9a-fA-F]/.test(ch);
 exports.isOctDigit = (ch) => /[0-7]/.test(ch);
 exports.isBinDigit = (ch) => /[0-1]/.test(ch);
-exports.isSymbolStart = (ch) => /[=<>%:|?\\/*.\p{L}_$!+-]/u.test(ch);
-exports.isSymbolChar = (ch) =>
-  /[:=@~<>%:&|?\\/^*.&#'\p{L}\p{N}_$!+-]/u.test(ch);
+exports.isSymbolStart = (ch) => /[=<>%:|?\\/*\p{L}_$!+-]/u.test(ch);
+exports.isSymbolChar = (ch) => /[:=@~<>%:&|?\\/^*&#'\p{L}\p{N}_$!+-]/u.test(ch);
 exports.isQuote = (ch) => /'/.test(ch);
 exports.isDoubleQuote = (ch) => /"/.test(ch);
 exports.isQQuote = (ch) => /`/.test(ch);

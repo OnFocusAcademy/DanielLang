@@ -322,6 +322,9 @@ exports.Lexer = class Lexer {
       } else if (isAmp(char)) {
         tokens.push(token(TokenTypes.Amp, char, this.input.pos));
         this.input.skip();
+      } else if (isDot(char)) {
+        tokens.push(token(TokenTypes.Dot, char, this.input.pos));
+        this.input.skip();
       } else {
         throw new Error(`Unknown token ${char} at position ${this.input.pos}`);
       }
