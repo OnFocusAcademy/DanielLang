@@ -52,7 +52,8 @@ const print = (obj, quoteString = false) => {
  * @param {List} list
  * @returns {String}
  */
-const printList = (list) => `(${list.map(print).join(" ")})`;
+const printList = (list) =>
+  list.length ? `(${list.map(print).join(" ")})` : "nil";
 
 /**
  * Print a map
