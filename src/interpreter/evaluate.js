@@ -151,6 +151,12 @@ const evalSymbol = (ast, env) => {
 const evalCall = (ast, env) => {
   let [fn, ...args] = ast;
 
+  // allow keyword key access to maps and objects as if keyword was a function
+  if (isKeyword(fn)) {
+    const obj = evaluate(args[0], env);
+    return obj instanceof Map ? obj.get(fn) : obj[fn];
+  }
+
   fn = typeof fn === "function" ? fn : evaluate(fn, env);
 
   if (typeof fn !== "function") {
