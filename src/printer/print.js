@@ -1,3 +1,4 @@
+const util = require("util");
 const chalk = require("chalk");
 const { isKeyword } = require("../interpreter/utils");
 
@@ -10,6 +11,10 @@ const print = (obj, quoteString = false) => {
   // null or undefined
   if (obj == null) {
     return "nil";
+  }
+
+  if (obj?.__string__ && typeof obj.__string__ === "function") {
+    return obj.__string__();
   }
 
   if (obj.isList && obj.isList()) {
@@ -42,6 +47,10 @@ const print = (obj, quoteString = false) => {
 
   if (typeof obj === "boolean") {
     return chalk.greenBright(String(obj));
+  }
+
+  if (typeof obj === "object") {
+    return util.inspect(obj);
   }
 
   return String(obj);
