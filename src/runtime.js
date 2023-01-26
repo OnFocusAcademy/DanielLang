@@ -1,5 +1,9 @@
 const { getAllOwnKeys } = require("./utils");
 
+/** Add __length__ property to Object constructor to make making classes work */
+// this won't work with all native constructors...
+Object.__length__ = 0;
+
 /**
  * Class representing an in-language module
  * @param {String} __name__
@@ -56,4 +60,56 @@ class Exception extends Error {
   }
 }
 
-module.exports = { makeModule, makeFunction, Exception };
+/**
+ * Attaches methods to a prototype or constructor
+ * @param {Map} methods
+ * @param {Object} obj
+ */
+const attachMethods = (methods, obj) => {
+  for (let [name, method] of methods) {
+    obj[name] = method;
+  }
+  return obj;
+};
+
+/**
+ * Creates a class
+ * @param {String} name
+ * @param {String[]} fields
+ * @param {Map} instanceMethods
+ * @param {Map} staticMethods
+ * @param {Function} superClass
+ */
+const makeClass = (
+  name,
+  fields,
+  instanceMethods,
+  staticMethods,
+  superClass
+) => {
+  // using this wrapper should allow the name property to be correctly set
+  // to the class name on the constructor function
+  let wrapper = {
+    [name]: function (...args) {
+      const superLen = superClass.__length__;
+      superClass.call(this, args.slice(0, superLen));
+      let subFields = fields.slice(superLen);
+      let i = superLen;
+      for (let arg of args.slice(superLen)) {
+        this[subFields[i]] = arg;
+        i++;
+      }
+    },
+  };
+
+  let klass = wrapper[name];
+
+  Object.setPrototypeOf(klass, superClass);
+  Object.setPrototypeOf(klass.prototype, superClass.prototype);
+  klass = attachMethods(staticMethods, klass);
+  klass.prototype = attachMethods(instanceMethods, klass.prototype);
+
+  return klass;
+};
+
+module.exports = { makeModule, makeFunction, Exception, makeClass };
