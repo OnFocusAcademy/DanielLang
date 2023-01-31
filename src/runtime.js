@@ -92,18 +92,27 @@ const makeClass = (
   let wrapper = {
     [name]: function (...args) {
       const superLen = superClass.__length__;
-      superClass.call(this, args.slice(0, superLen));
+      superClass.call(this, args);
       let subFields = fields.slice(superLen);
       let i = superLen;
       for (let arg of args.slice(superLen)) {
-        this[subFields[i]] = arg;
-        i++;
+        this[subFields[i++]] = arg;
+      }
+
+      if (instanceMethods.has("init")) {
+        let initArgs = {};
+        let i = 0;
+        for (let field of fields) {
+          initArgs[field] = args[i++];
+        }
+        instanceMethods.get("init")(this, initArgs);
       }
     },
   };
 
   let klass = wrapper[name];
 
+  klass.__length__ = fields.length;
   Object.setPrototypeOf(klass, superClass);
   Object.setPrototypeOf(klass.prototype, superClass.prototype);
   klass = attachMethods(staticMethods, klass);
