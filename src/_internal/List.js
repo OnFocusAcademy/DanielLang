@@ -299,13 +299,16 @@ class List {
     let i = start < 0 ? this.length - start : start;
     let copy = new List();
 
-    for (let value of this) {
-      if (i === stop) {
+    if (stop < i) {
+      return copy;
+    }
+
+    while (i < stop) {
+      if (i >= this.length) {
         break;
       }
 
-      copy.append(value);
-      i++;
+      copy.append(this.get(i++));
     }
 
     return copy;
