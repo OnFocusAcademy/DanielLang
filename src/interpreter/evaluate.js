@@ -1,4 +1,5 @@
 // eslint-disable-next-line
+const { makeClass } = require("../runtime");
 const { isList, List, list, cons } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
@@ -13,6 +14,14 @@ const evaluate = (ast, env) => {
   if (isList(ast)) {
     // evaluate form
     return evalList(ast, env);
+  }
+
+  if (ast instanceof Map && ast.literal) {
+    let m = new Map();
+    for (let [k, v] of ast) {
+      m.set(evaluate(k, env), evaluate(v, env));
+    }
+    return m;
   }
 
   switch (typeof ast) {
@@ -104,6 +113,8 @@ const evalList = (ast, env) => {
       return evalDefMacro(ast, env);
     case Forms.Macroexpand:
       return macroexpand(ast.tail(), env);
+    case Forms.Class:
+      return evalClassDecl(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -434,6 +445,122 @@ const quasiquote = (ast, env) => {
  */
 const evalDefMacro = (ast, env) => {
   return evalFuncDef(ast, env, true);
+};
+
+/**
+ * Defines a class
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalClassDecl = (ast, env) => {
+  let [, className, maybeExtends, maybeSuper] = [...ast];
+  /**
+   * @type {Function}
+   */
+  const superClass =
+    isKeyword(maybeExtends) && maybeExtends === Symbol.for(":extends")
+      ? evaluate(maybeSuper, env)
+      : Object;
+  const defns =
+    isKeyword(maybeExtends) && maybeExtends === Symbol.for(":extends")
+      ? ast.slice(4)
+      : ast.slice(2);
+  // includes both static methods and properties
+  let staticMethods = new Map();
+  let instanceMethods = new Map();
+  let fields = [];
+
+  for (let defn of defns) {
+    const [fst, maybeStatic] = defn;
+
+    if (fst === Symbol.for("new")) {
+      fields = defineNew(defn);
+    } else if (maybeStatic === Symbol.for(":static")) {
+      const [, , init, body] = defn;
+
+      // static property definition
+      if (typeof init === "symbol") {
+        staticMethods.set(Symbol.keyFor(init), evaluate(body, env));
+      } else {
+        const [name] = init;
+        staticMethods.set(
+          Symbol.keyFor(name),
+          defineMethod(
+            defn.slice(2),
+            env,
+            Symbol.keyFor(className),
+            superClass,
+            true
+          )
+        );
+      }
+    } else {
+      const [, init] = defn;
+      const name = init?.get(0) ?? Symbol.for("");
+      instanceMethods.set(
+        Symbol.keyFor(name),
+        defineMethod(defn.slice(1), env, Symbol.keyFor(className), superClass)
+      );
+    }
+  }
+
+  env.set(
+    className,
+    makeClass(className, fields, instanceMethods, staticMethods, superClass)
+  );
+};
+
+/**
+ * Defines a method on a class or instance
+ * @param {List} ast
+ * @param {Env} env
+ */
+const defineMethod = (ast, env, className, superClass, static = false) => {
+  const [args, ...body] = ast;
+  const blockBody = list(Symbol.for("do"), ...body);
+  const params = args.reduce(
+    (args, arg) => (arg === "&" ? args : [...args, arg]),
+    []
+  );
+  const restIdx = args.findIndex((arg) => arg === "&");
+  const variadic = restIdx > -1;
+  const length = variadic ? params.length - 1 : params.length;
+
+  const method = function (...args) {
+    const scope = env.extend(className);
+    scope.define(Symbol.for("self"), this);
+    scope.define(
+      Symbol.for("super"),
+      static ? superClass : superClass.prototype
+    );
+
+    params.forEach((param, i) => {
+      if (variadic && i === length) {
+        scope.define(param, args.slice(i));
+      } else {
+        scope.define(param, args[i]);
+      }
+    });
+
+    return evaluate(blockBody, scope);
+  };
+
+  return method;
+};
+
+/**
+ * Defines the new constructor that sets fields for a class
+ * @param {List} ast
+ * @param {Env} env
+ */
+const defineNew = (ast) => {
+  const [, ...args] = ast;
+  return args.reduce((args, arg) => {
+    if (arg === "&") {
+      return args;
+    }
+    return Symbol.keyFor(arg);
+  }, []);
 };
 
 exports.evaluate = evaluate;

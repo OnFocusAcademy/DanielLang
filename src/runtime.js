@@ -94,8 +94,20 @@ const makeClass = (
       const superLen = superClass.__length__;
       superClass.call(this, args);
       let subFields = fields.slice(superLen);
-      let i = superLen;
+      let i = 0;
       for (let arg of args.slice(superLen)) {
+        // handle variadic constructor
+        // note that a subclass with a variadic superclass constructor
+        // will not be able to accept additional arguments besides
+        // what the superclass defines
+        if (
+          i === subFields.length - 1 &&
+          args.slice(superLen).length > subFields.length
+        ) {
+          this[subFields[i]] = args.slice(i);
+          break;
+        }
+
         this[subFields[i++]] = arg;
       }
 
@@ -103,8 +115,15 @@ const makeClass = (
         let initArgs = {};
         let i = 0;
         for (let field of fields) {
+          // handle variadic init arg
+          if (i === fields.length - 1 && args.length > fields.length) {
+            initArgs[field] = args.slice(i);
+            break;
+          }
+
           initArgs[field] = args[i++];
         }
+
         instanceMethods.get("init")(this, initArgs);
       }
     },
@@ -115,8 +134,8 @@ const makeClass = (
   klass.__length__ = fields.length;
   Object.setPrototypeOf(klass, superClass);
   Object.setPrototypeOf(klass.prototype, superClass.prototype);
-  klass = attachMethods(staticMethods, klass);
-  klass.prototype = attachMethods(instanceMethods, klass.prototype);
+  attachMethods(staticMethods, klass);
+  attachMethods(instanceMethods, klass.prototype);
 
   return klass;
 };

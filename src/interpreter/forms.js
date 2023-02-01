@@ -15,4 +15,5 @@ exports.Forms = {
   QuasiQuote: "quasiquote",
   DefMacro: "defmacro",
   Macroexpand: "macroexpand",
+  Class: "class",
 };

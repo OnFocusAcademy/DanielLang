@@ -23,9 +23,9 @@ class List {
    * @returns {this}
    */
   append(value) {
-    const node = cons(value, null);
+    const node = cons(value);
 
-    if (!this.head) {
+    if (this.head == null) {
       this.head = node;
       this.end = node;
     } else {
@@ -329,7 +329,7 @@ class List {
   *[Symbol.iterator]() {
     let head = this.head;
 
-    while (head) {
+    while (head != null) {
       yield head.head;
       head = head.tail;
     }
@@ -349,7 +349,7 @@ class List {
 const cons = (head, tail, list = false) => {
   if (tail instanceof List) {
     return list(head, ...tail);
-  } else if (!head && !tail) {
+  } else if (head == null && tail == null) {
     return null;
   } else if (tail == null && list) {
     return list(head);
