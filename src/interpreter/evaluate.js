@@ -531,14 +531,15 @@ const defineMethod = (ast, env, className, superClass, static = false) => {
 
   const method = function (...args) {
     const scope = env.extend(className);
-    scope.define(Symbol.for("self"), this);
     scope.define(
       Symbol.for("super"),
       static ? superClass : superClass.prototype
     );
 
     params.forEach((param, i) => {
-      if (variadic && i === length) {
+      if (i === 0) {
+        scope.define(param, this);
+      } else if (variadic && i === length) {
         scope.define(param, args.slice(i));
       } else {
         scope.define(param, args[i]);
