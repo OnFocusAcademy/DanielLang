@@ -563,7 +563,7 @@ const defineNew = (ast) => {
     if (arg === "&") {
       return args;
     }
-    return Symbol.keyFor(arg);
+    return [...args, Symbol.keyFor(arg)];
   }, []);
 };
 
