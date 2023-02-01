@@ -480,11 +480,14 @@ const evalClassDecl = (ast, env) => {
 
       // static property definition
       if (typeof init === "symbol") {
-        staticMethods.set(Symbol.keyFor(init), evaluate(body, env));
+        staticMethods.set(
+          isKeyword(init) ? init : Symbol.keyFor(init),
+          evaluate(body, env)
+        );
       } else {
         const [name] = init;
         staticMethods.set(
-          Symbol.keyFor(name),
+          isKeyword(name) ? name : Symbol.keyFor(name),
           defineMethod(
             defn.slice(2),
             env,
@@ -498,7 +501,7 @@ const evalClassDecl = (ast, env) => {
       const [, init] = defn;
       const name = init?.get(0) ?? Symbol.for("");
       instanceMethods.set(
-        Symbol.keyFor(name),
+        isKeyword(name) ? name : Symbol.keyFor(name),
         defineMethod(defn.slice(1), env, Symbol.keyFor(className), superClass)
       );
     }
