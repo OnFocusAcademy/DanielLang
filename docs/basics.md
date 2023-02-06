@@ -231,6 +231,7 @@ All other kinds of data are "self-quoting," which means they don't need to be ex
 
 ````clojure
 (quasiquote (+ 1 a))  ;=> same as quoted example
+```
 
 There is also a `quasiquote` shorthand form:
 
