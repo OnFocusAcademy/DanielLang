@@ -272,6 +272,6 @@ The `quote`, `quasiquote`, `unquote`, and `splice-unquote` forms enable you to d
 Define new macros with the `defmacro` form:
 
 ```clojure
-(defmacro (unless pred a b) `(if ~pred ~b ~a))  ; only 1 of a or b is evaluated depending on if check
+(defmacro (unless pred a b) `(if ~pred ~b ~a))  ; only one of a or b is evaluated depending on the if check
 (unless true 7 8)  ;=> 8
 ```
