@@ -16,4 +16,5 @@ exports.Forms = {
   DefMacro: "defmacro",
   Macroexpand: "macroexpand",
   Class: "class",
+  Try: "try",
 };

@@ -115,6 +115,8 @@ const evalList = (ast, env) => {
       return macroexpand(ast.get(1), env);
     case Forms.Class:
       return evalClassDecl(ast, env);
+    case Forms.Try:
+      return evalTryCatch(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -526,6 +528,28 @@ const defineNew = (ast) => {
     }
     return [...args, Symbol.keyFor(arg)];
   }, []);
+};
+
+/**
+ * Evaluate a try/catch block
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalTryCatch = (ast, env) => {
+  const [, tryExpr, catchClause] = ast;
+
+  try {
+    return evaluate(tryExpr, env);
+  } catch (e) {
+    const [, exn, catchExpr] = catchClause;
+
+    if (typeof exn !== "symbol") {
+      throw new Error(`Catch argument must be a symbol; ${typeof exn} given`);
+    }
+
+    env.set(exn, e);
+    return evaluate(catchExpr, env);
+  }
 };
 
 exports.evaluate = evaluate;
