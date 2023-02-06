@@ -229,7 +229,7 @@ All other kinds of data are "self-quoting," which means they don't need to be ex
 
 `quasiquote` is like `quote`, but it leaves an "escape hatch" for you to allow symbols to be evaluated as identifiers:
 
-````clojure
+```clojure
 (quasiquote (+ 1 a))  ;=> same as quoted example
 ```
 
@@ -237,7 +237,7 @@ There is also a `quasiquote` shorthand form:
 
 ```clojure
 `(+ 1 a)
-````
+```
 
 When you combine `quasiquote` with `unquote,` the unquoted data is evaluated as an expression:
 
