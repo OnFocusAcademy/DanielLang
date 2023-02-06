@@ -131,6 +131,7 @@ const makeClass = (
 
   let klass = wrapper[name];
 
+  klass.__name__ = klass.name;
   klass.__length__ = fields.length;
   Object.setPrototypeOf(klass, superClass);
   Object.setPrototypeOf(klass.prototype, superClass.prototype);
