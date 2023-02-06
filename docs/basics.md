@@ -275,3 +275,20 @@ Define new macros with the `defmacro` form:
 (defmacro (unless pred a b) `(if ~pred ~b ~a))  ; only one of a or b is evaluated depending on the if check
 (unless true 7 8)  ;=> 8
 ```
+
+## Exception Handling
+
+Throw exceptions with the `fail` function:
+
+```clojure
+(fail "Something bad happened")
+```
+
+Handle possible exceptions with `try`/`catch` blocks:
+
+```clojure
+(try
+    (function-that-may-throw args)
+    (catch exn
+        (println exn.message)))
+```
