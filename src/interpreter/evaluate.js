@@ -112,7 +112,7 @@ const evalList = (ast, env) => {
     case Forms.DefMacro:
       return evalDefMacro(ast, env);
     case Forms.Macroexpand:
-      return macroexpand(ast.tail(), env);
+      return macroexpand(ast.get(1), env);
     case Forms.Class:
       return evalClassDecl(ast, env);
     default:
@@ -230,30 +230,11 @@ const evalIf = (ast, env) => {
   const [, cond, then, orElse] = ast;
 
   if (isTruthy(evaluate(cond, env))) {
-    // then branch
-    if (isSelfQuoting(then)) {
-      return then;
-    } else if (typeof then === "symbol") {
-      return env.get(then);
-    } else if (isList(then)) {
-      return evalList(then, env);
-    } else {
-      // will we ever get here?
-      return evaluate(then, env);
-    }
+    return evaluate(then, env);
   }
 
   // else branch
-  if (isSelfQuoting(orElse)) {
-    return orElse;
-  } else if (typeof orElse === "symbol") {
-    return env.get(orElse);
-  } else if (isList(orElse)) {
-    return evalList(orElse, env);
-  } else {
-    // will we ever get here?
-    return evaluate(orElse, env);
-  }
+  return evaluate(orElse, env);
 };
 
 /**
@@ -294,27 +275,7 @@ const makeLambda = (ast, env, name = "lambda", isMacro = false) => {
       }
     });
 
-    // Body is do block, using loop to eliminate at least 1 recursive call
-    let value = null;
-
-    // skip do symbol
-    for (let expr of blockBody.tail()) {
-      // avoid recursive calls to evaluate as much as possible
-      // so we can have more recursion with in-language
-      // functions before we blow the stack - I think
-      // this is as close to TCO as we can get
-      if (isSelfQuoting(expr)) {
-        value = expr;
-      } else if (typeof expr === "symbol") {
-        value = scope.get(expr);
-      } else if (isList(expr)) {
-        value = evalList(expr, scope);
-      } else {
-        value = evaluate(expr, scope);
-      }
-    }
-
-    return value;
+    return evaluate(blockBody, scope);
   };
 
   danielFn.daniel = true;

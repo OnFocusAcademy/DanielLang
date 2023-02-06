@@ -3,7 +3,7 @@ const isKeyword = (obj) =>
 exports.isKeyword = isKeyword;
 const isFalsy = (val) => val === false || val == null;
 exports.isFalsy = isFalsy;
-exports.isTruthy = (val) => isFalsy(val);
+exports.isTruthy = (val) => !isFalsy(val);
 
 // Self-quoting data is AST data that evaluates to itself, i.e.
 // doesn't have to be looked up in an environment. Native

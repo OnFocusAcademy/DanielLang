@@ -346,12 +346,12 @@ class List {
  * @param {Any} tail
  * @returns {Cons|null}
  */
-const cons = (head, tail, list = false) => {
+const cons = (head, tail, lst = false) => {
   if (tail instanceof List) {
     return list(head, ...tail);
   } else if (head == null && tail == null) {
     return null;
-  } else if (tail == null && list) {
+  } else if (tail == null && lst) {
     return list(head);
   }
 
