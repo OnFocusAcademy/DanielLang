@@ -547,8 +547,9 @@ const evalTryCatch = (ast, env) => {
       throw new Error(`Catch argument must be a symbol; ${typeof exn} given`);
     }
 
-    env.set(exn, e);
-    return evaluate(catchExpr, env);
+    const scope = env.extend("try/catch");
+    scope.set(exn, e);
+    return evaluate(catchExpr, scope);
   }
 };
 
