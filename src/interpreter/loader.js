@@ -125,7 +125,7 @@ const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
     }
 
     // evaluate the module, passing in its dependencies
-    modules[dep] = moduleTable[dep].module.create(...mods);
+    modules[dep] = moduleTable[dep].create(...mods);
 
     // add module to the containing environment (probably global)
     if (open) {

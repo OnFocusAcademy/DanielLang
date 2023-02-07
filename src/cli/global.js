@@ -4,7 +4,7 @@ const { makeFunction } = require("../runtime");
 const { evaluate } = require("../interpreter/evaluate");
 
 const createGlobalEnv = () => {
-  let env = Env.from(Core.module.create());
+  let env = Env.from(Core.create());
 
   env.set(
     Symbol.for("eval"),
