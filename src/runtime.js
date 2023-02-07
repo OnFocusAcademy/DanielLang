@@ -187,6 +187,7 @@ const makeClass = (
 module.exports = {
   Exception,
   RuntimeException,
+  Module,
   makeModule,
   makeFunction,
   resolveRequire,

@@ -1,4 +1,5 @@
-const { resolveRequire, Exception } = require("../runtime");
+// eslint-disable-next-line
+const { resolveRequire, Exception, Module } = require("../runtime");
 // eslint-disable-next-line
 const { Env } = require("./Env");
 
@@ -12,21 +13,21 @@ let modules = {};
  * @param {String[]} nativeRequires
  */
 const getModulePaths = (requires, nativeRequires) => {
-  let urls = [];
+  let paths = [];
 
   for (let req of requires) {
-    let url = resolveRequire(req);
-    nameMap[url] = req;
-    urls.push(url);
+    let path = resolveRequire(req);
+    nameMap[path] = req;
+    paths.push(path);
   }
 
   for (let req of nativeRequires) {
-    let url = resolveRequire(req, { native: true });
-    nameMap[url] = req;
-    urls.push(url);
+    let path = resolveRequire(req, { native: true });
+    nameMap[path] = req;
+    paths.push(path);
   }
 
-  return urls;
+  return paths;
 };
 
 /**
@@ -92,7 +93,13 @@ const getLoadOrder = (deps) => {
   return sorted;
 };
 
-const define = (name, file, deps, module) => {
+/**
+ * Define a module in the module table
+ * @param {String} name
+ * @param {String} file
+ * @param {Module} module
+ */
+const define = (name, file, module) => {
   if (typeof module !== "function") {
     throw new Exception(`Module constructor for ${name} is not a function`);
   }
@@ -101,12 +108,12 @@ const define = (name, file, deps, module) => {
     throw new Exception(`Module ${name} already queued`);
   }
 
-  moduleTable[file] = { deps, module };
+  moduleTable[file] = module;
 };
 
 /**
  * Evaluate the modules that have been queued up
- * @param {String[]} depsOrder
+ * @param {Module[]} depsOrder
  * @param {Env} env
  * @param {Object} [kwargs]
  * @param {Boolean} [kwargs.open=false]
@@ -114,8 +121,8 @@ const define = (name, file, deps, module) => {
  */
 const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
   for (let dep of depsOrder) {
-    let deps = moduleTable[dep].deps;
     let mods = [];
+    let deps = getModulePaths(dep.requires, dep.nativeRequires);
 
     for (let d of deps) {
       // deps are file paths for already evaluated modules so
@@ -131,9 +138,13 @@ const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
     if (open) {
       env.addMany(modules[dep]);
     } else if (as) {
-      env.define(as, modules[dep]);
+      env.define(Symbol.for(as), modules[dep]);
     } else {
-      env.define(nameMap[dep], modules[dep]);
+      env.define(Symbol.for(nameMap[dep]), modules[dep]);
     }
   }
 };
+
+const loadModules = ({ name, path = "" }) => {};
+
+exports.loadModules = loadModules;
