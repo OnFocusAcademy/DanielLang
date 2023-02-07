@@ -1,6 +1,5 @@
 const path = require("path");
 const fs = require("fs");
-const { getAllOwnKeys } = require("./utils");
 
 /** Add __length__ property to Object constructor to make making classes work */
 // this won't work with all native constructors...
@@ -18,27 +17,19 @@ class RuntimeException extends Exception {
   }
 }
 
-/**
- * Class representing an in-language module
- * @param {String} __name__
- * @param {Object} provides names provided by the module in the module scope
- */
 class Module {
   /**
    * Constructs the Module object
    * @param {String} name
-   * @param {Object} provides
+   * @param {Function} create
    * @param {String[]} requires in-language modules this module requires
    * @param {String[]} nativeRequires JS modules this module requires
    */
-  constructor(name, provides, requires, nativeRequires) {
-    this.__name__ = name;
-    this.__requires__ = requires;
-    this.__nativeRequires__ = nativeRequires;
-
-    for (let key of getAllOwnKeys(provides)) {
-      this[typeof key === "symbol" ? Symbol.keyFor(key) : key] = provides[key];
-    }
+  constructor(name, create, requires, nativeRequires) {
+    this.name = name;
+    this.create = create;
+    this.requires = requires;
+    this.nativeRequires = nativeRequires;
   }
 
   toString() {
@@ -49,13 +40,13 @@ class Module {
 /**
  * Function wrapper for Module class
  * @param {String} name
- * @param {Object} provides
+ * @param {Function} create
  * @param {String[]} requires in-language modules this module requires
  * @param {String[]} nativeRequires JS modules this module requires
  * @returns {Module}
  */
-const makeModule = (name, provides, requires = [], nativeRequires = []) =>
-  new Module(name, provides, requires, nativeRequires);
+const makeModule = (name, create, requires = [], nativeRequires = []) =>
+  new Module(name, create, requires, nativeRequires);
 
 /**
  * Convert a JS function into a Daniel function

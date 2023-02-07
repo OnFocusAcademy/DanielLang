@@ -101,7 +101,7 @@ const define = (name, file, deps, module) => {
     throw new Exception(`Module ${name} already queued`);
   }
 
-  moduleTable[file] = { name, file, deps, module };
+  moduleTable[file] = { deps, module };
 };
 
 /**
@@ -118,13 +118,14 @@ const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
     let mods = [];
 
     for (let d of deps) {
-      // depsOrder starts with an already sorted array from the dependency graph
-      // so we can just iterate over it since deps are already resolved
+      // deps are file paths for already evaluated modules so
+      // it's safe to use d as the key to get the module info
+      // to populate dependencies for the module being evaluated
       mods.push(modules[d]);
     }
 
     // evaluate the module, passing in its dependencies
-    modules[dep] = moduleTable[dep].module(...mods);
+    modules[dep] = moduleTable[dep].module.create(...mods);
 
     // add module to the containing environment (probably global)
     if (open) {
@@ -132,7 +133,7 @@ const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
     } else if (as) {
       env.define(as, modules[dep]);
     } else {
-      env.define(moduleTable[dep].name, modules[dep]);
+      env.define(nameMap[dep], modules[dep]);
     }
   }
 };
