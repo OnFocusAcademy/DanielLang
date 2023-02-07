@@ -1,4 +1,6 @@
 const { resolveRequire, Exception } = require("../runtime");
+// eslint-disable-next-line
+const { Env } = require("./Env");
 
 let moduleTable = {};
 let nameMap = {};
@@ -88,4 +90,40 @@ const getLoadOrder = (deps) => {
 
   // now the dependencies have been sorted, so we can return the list
   return sorted;
+};
+
+const define = (name, file, deps, module) => {
+  if (typeof module !== "function") {
+    throw new Exception(`Module constructor for ${name} is not a function`);
+  }
+
+  if (file in moduleTable) {
+    throw new Exception(`Module ${name} already queued`);
+  }
+
+  moduleTable[file] = { name, file, deps, module };
+};
+
+/**
+ * Evaluate the modules that have been queued up
+ * @param {String[]} depsOrder
+ * @param {Env} env
+ */
+const evaluateModules = (depsOrder, env) => {
+  for (let dep of depsOrder) {
+    let deps = moduleTable[dep].deps;
+    let mods = [];
+
+    for (let d of deps) {
+      // depsOrder starts with an already sorted array from the dependency graph
+      // so we can just iterate over it since deps are already resolved
+      mods.push(modules[d]);
+    }
+
+    // evaluate the module, passing in its dependencies
+    modules[dep] = moduleTable[dep].module(...mods);
+
+    // add module to the containing environment (probably global)
+    env.define(moduleTable[dep].name, modules[dep]);
+  }
 };
