@@ -108,8 +108,11 @@ const define = (name, file, deps, module) => {
  * Evaluate the modules that have been queued up
  * @param {String[]} depsOrder
  * @param {Env} env
+ * @param {Object} [kwargs]
+ * @param {Boolean} [kwargs.open=false]
+ * @param {String} [kwargs.as=""]
  */
-const evaluateModules = (depsOrder, env) => {
+const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
   for (let dep of depsOrder) {
     let deps = moduleTable[dep].deps;
     let mods = [];
@@ -124,6 +127,12 @@ const evaluateModules = (depsOrder, env) => {
     modules[dep] = moduleTable[dep].module(...mods);
 
     // add module to the containing environment (probably global)
-    env.define(moduleTable[dep].name, modules[dep]);
+    if (open) {
+      env.addMany(modules[dep]);
+    } else if (as) {
+      env.define(as, modules[dep]);
+    } else {
+      env.define(moduleTable[dep].name, modules[dep]);
+    }
   }
 };
