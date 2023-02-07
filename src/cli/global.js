@@ -1,14 +1,14 @@
 const { Env } = require("../interpreter/Env");
-const Core = require("../../lib/js/Core");
+const { loadModules } = require("../interpreter/loader");
 const { makeFunction } = require("../runtime");
 const { evaluate } = require("../interpreter/evaluate");
 
 const createGlobalEnv = () => {
-  let env = Env.from(Core.create());
-
+  const env = new Env({ parent: null, name: "__global__" });
+  loadModules({ name: "Global", env });
   env.set(
     Symbol.for("eval"),
-    makeFunction((ast) => evaluate(ast, env), { name: "Daniel.core.eval" })
+    makeFunction((ast) => evaluate(ast, env), { name: "Core.eval" })
   );
 
   return env;

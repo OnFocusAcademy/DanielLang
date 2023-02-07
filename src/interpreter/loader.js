@@ -1,3 +1,4 @@
+const fs = require("fs");
 // eslint-disable-next-line
 const { resolveRequire, Exception, Module } = require("../runtime");
 // eslint-disable-next-line
@@ -113,18 +114,24 @@ const define = (name, file, module) => {
 
 /**
  * Evaluate the modules that have been queued up
- * @param {Module[]} depsOrder
+ * @param {String[]} depsOrder
+ * @param {Object} deps
  * @param {Env} env
  * @param {Object} [kwargs]
  * @param {Boolean} [kwargs.open=false]
  * @param {String} [kwargs.as=""]
  */
-const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
+const evaluateModules = (
+  depsOrder,
+  deps,
+  env,
+  { open = false, as = "" } = {}
+) => {
   for (let dep of depsOrder) {
     let mods = [];
-    let deps = getModulePaths(dep.requires, dep.nativeRequires);
+    let ds = getModulePaths(deps.requires, deps.nativeRequires);
 
-    for (let d of deps) {
+    for (let d of ds) {
       // deps are file paths for already evaluated modules so
       // it's safe to use d as the key to get the module info
       // to populate dependencies for the module being evaluated
@@ -145,6 +152,54 @@ const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
   }
 };
 
-const loadModules = ({ name, path = "" }) => {};
+const loadModules = ({ name, path = "", env, open = false, as = "" } = {}) => {
+  if (path === "") {
+    if (fs.existsSync(resolveRequire(name))) {
+      path = resolveRequire(name);
+    } else {
+      throw new Exception(
+        `Could not resolve path to module ${name ?? "unknown module"}`
+      );
+    }
+  }
+
+  nameMap[path] = name;
+
+  const defineModule = (path) => {
+    let module;
+
+    if (path.endsWith(".js")) {
+      module = require(path);
+    } else if (path.endsWith(".dan")) {
+      // evaluate Daniel module
+    } else {
+      throw new Exception(`A module must be either a .js or .dan file`);
+    }
+
+    const rootDeps = getModulePaths(module.requires, module.nativeRequires);
+
+    if (!(path in moduleTable)) {
+      define(module.name, path, module);
+    }
+
+    for (let dep of rootDeps) {
+      defineModule(dep);
+    }
+  };
+
+  defineModule(path);
+  const loadOrder = getLoadOrder([path]);
+  evaluateModules(
+    loadOrder,
+    {
+      requires: module.requires,
+      nativeRequires: module.nativeRequires,
+    },
+    env,
+    { open, as }
+  );
+
+  return modules;
+};
 
 exports.loadModules = loadModules;
