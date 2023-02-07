@@ -1,5 +1,5 @@
 const { Env } = require("../interpreter/Env");
-const { module: core } = require("../../lib/js/core");
+const { module: core } = require("../../lib/js/Core");
 const { makeFunction } = require("../runtime");
 const { evaluate } = require("../interpreter/evaluate");
 
