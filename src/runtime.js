@@ -14,9 +14,13 @@ class Module {
    * Constructs the Module object
    * @param {String} name
    * @param {Object} provides
+   * @param {String[]} requires in-language modules this module requires
+   * @param {String[]} nativeRequires JS modules this module requires
    */
-  constructor(name, provides) {
+  constructor(name, provides, requires, nativeRequires) {
     this.__name__ = name;
+    this.requires = requires;
+    this.nativeRequires = nativeRequires;
 
     for (let key of getAllOwnKeys(provides)) {
       this[typeof key === "symbol" ? Symbol.keyFor(key) : key] = provides[key];
@@ -34,7 +38,8 @@ class Module {
  * @param {Object} provides
  * @returns {Module}
  */
-const makeModule = (name, provides) => new Module(name, provides);
+const makeModule = (name, provides, requires, nativeRequires) =>
+  new Module(name, provides, requires, nativeRequires);
 
 /**
  * Convert a JS function into a Daniel function
