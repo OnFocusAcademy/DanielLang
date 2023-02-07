@@ -344,6 +344,7 @@ class List {
  *
  * @param {Any} head
  * @param {Any} tail
+ * @param {Boolean} [lst=false]
  * @returns {Cons|null}
  */
 const cons = (head, tail, lst = false) => {

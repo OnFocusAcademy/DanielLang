@@ -1,10 +1,10 @@
 const { Env } = require("../interpreter/Env");
-const { provides: core } = require("../../lib/js/core");
+const { module: core } = require("../../lib/js/core");
 const { makeFunction } = require("../runtime");
 const { evaluate } = require("../interpreter/evaluate");
 
 const createGlobalEnv = () => {
-  let env = Env.from(core);
+  let env = Env.from(core());
 
   env.set(
     Symbol.for("eval"),

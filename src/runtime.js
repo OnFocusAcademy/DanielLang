@@ -1,8 +1,22 @@
+const path = require("path");
+const fs = require("fs");
 const { getAllOwnKeys } = require("./utils");
 
 /** Add __length__ property to Object constructor to make making classes work */
 // this won't work with all native constructors...
 Object.__length__ = 0;
+
+class Exception extends Error {
+  constructor(message) {
+    super(message);
+  }
+}
+
+class RuntimeException extends Exception {
+  constructor(message) {
+    super(message);
+  }
+}
 
 /**
  * Class representing an in-language module
@@ -19,8 +33,8 @@ class Module {
    */
   constructor(name, provides, requires, nativeRequires) {
     this.__name__ = name;
-    this.requires = requires;
-    this.nativeRequires = nativeRequires;
+    this.__requires__ = requires;
+    this.__nativeRequires__ = nativeRequires;
 
     for (let key of getAllOwnKeys(provides)) {
       this[typeof key === "symbol" ? Symbol.keyFor(key) : key] = provides[key];
@@ -36,16 +50,19 @@ class Module {
  * Function wrapper for Module class
  * @param {String} name
  * @param {Object} provides
+ * @param {String[]} requires in-language modules this module requires
+ * @param {String[]} nativeRequires JS modules this module requires
  * @returns {Module}
  */
-const makeModule = (name, provides, requires, nativeRequires) =>
+const makeModule = (name, provides, requires = [], nativeRequires = []) =>
   new Module(name, provides, requires, nativeRequires);
 
 /**
  * Convert a JS function into a Daniel function
  * @param {Function} func
  * @param {Object} kwargs
- * @param {String} kwargs.name
+ * @param {String} [kwargs.name=lambda]
+ * @param {Boolean} [kwargs.variadic=false]
  */
 const makeFunction = (
   func,
@@ -59,11 +76,41 @@ const makeFunction = (
   return func;
 };
 
-class Exception extends Error {
-  constructor(message) {
-    super(message);
+/**
+ * Resolve a required module name to a file
+ * @param {String} rq
+ * @param {Object} kwargs
+ * @param {String} kwargs.file required if local module
+ * @param {Boolean} kwargs.native
+ */
+const resolveRequire = (rq, { file = "", native = false } = {}) => {
+  if (rq.startsWith(".")) {
+    // local module (user-defined)
+    const basePath = path.dirname(file);
+    const absPath = path.join(basePath, rq);
+
+    if (fs.existsSync(`${absPath}.dan`)) {
+      // is in-language module
+      return `${absPath}.dan`;
+    } else if (fs.existsSync(`${absPath}.js`)) {
+      // is native module
+      return `${absPath}.js`;
+    }
+  } else {
+    // global module (builtin)
+    const filePath = path.join(
+      __dirname,
+      "../lib",
+      native ? `${rq}.dan` : `js/${rq}.js`
+    );
+
+    if (fs.existsSync(filePath)) {
+      return filePath;
+    }
   }
-}
+
+  throw new RuntimeException(`Could not resolve file for module ${rq}`);
+};
 
 /**
  * Attaches methods to a prototype or constructor
@@ -146,4 +193,11 @@ const makeClass = (
   return klass;
 };
 
-module.exports = { makeModule, makeFunction, Exception, makeClass };
+module.exports = {
+  Exception,
+  RuntimeException,
+  makeModule,
+  makeFunction,
+  resolveRequire,
+  makeClass,
+};

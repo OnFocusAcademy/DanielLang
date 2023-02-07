@@ -1,3 +1,5 @@
+const { pathToFileURL } = require("url");
+
 exports.getAllOwnKeys = (obj) => {
   let keys = [];
 
@@ -11,3 +13,13 @@ exports.getAllOwnKeys = (obj) => {
 
   return keys;
 };
+
+exports.getFileURL = (path) => pathToFileURL(path).href;
+
+/**
+ * Capitalize a string's first character and lowercase the rest
+ * @param {String} str
+ * @returns {String}
+ */
+exports.capitalize = (str) =>
+  str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();

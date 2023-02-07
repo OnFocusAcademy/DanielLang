@@ -49,11 +49,11 @@ const print = (obj, quoteString = false) => {
     return chalk.greenBright(String(obj));
   }
 
-  if (typeof obj === "object") {
+  if (typeof obj === "object" && obj.toString().startsWith("[object")) {
     return util.inspect(obj);
   }
 
-  return String(obj);
+  return obj.toString();
 };
 
 /**
