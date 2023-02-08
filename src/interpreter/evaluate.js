@@ -580,7 +580,7 @@ const evalImport = (ast, env) => {
     native,
   });
 
-  loadModules({ name, path: filePath, env, as, native: ext === "js" });
+  loadModules({ name, path: filePath, env, as, native });
 
   return null;
 };
