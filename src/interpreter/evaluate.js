@@ -1,6 +1,6 @@
 const path = require("path");
 // eslint-disable-next-line
-const { makeClass, resolveRequire } = require("../runtime");
+const { makeClass, resolveRequire, makeModule } = require("../runtime");
 const { isError } = require("../utils");
 const { isList, List, list, cons } = require("../_internal/List");
 // eslint-disable-next-line
@@ -122,6 +122,8 @@ const evalList = (ast, env) => {
       return evalTryCatch(ast, env);
     case Forms.Import:
       return evalImport(ast, env);
+    case Forms.Module:
+      return evalModule(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -579,8 +581,31 @@ const evalImport = (ast, env) => {
   });
 
   loadModules({ name, path: filePath, env, as, native });
+};
 
-  return null;
+/**
+ * Evaluates a Daniel module
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalModule = (ast, env) => {
+  const [, name, ...body] = ast;
+  const moduleEnv = env.extend(Symbol.keyFor(name));
+  let provides = {};
+
+  for (let expr of body) {
+    let fst = isList(expr) && expr.first();
+    if (fst === Symbol.for("provide")) {
+      // will have exactly 2 nodes, both symbols, 2nd is variable name for value to provide
+      let sym = expr.get(1);
+      provides[Symbol.keyFor(sym)] = evaluate(sym, moduleEnv);
+    } else {
+      // is definition or side effect
+      evaluate(expr, moduleEnv);
+    }
+  }
+
+  return makeModule(Symbol.keyFor(name), () => provides);
 };
 
 exports.evaluate = evaluate;

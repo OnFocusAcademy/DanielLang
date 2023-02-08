@@ -18,4 +18,5 @@ exports.Forms = {
   Class: "class",
   Try: "try",
   Import: "import",
+  Module: "module",
 };

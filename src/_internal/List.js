@@ -141,13 +141,6 @@ class List {
   }
 
   /**
-   * Alias for first
-   */
-  head() {
-    return this.first();
-  }
-
-  /**
    * Check if list has a value as an element
    * @param {Any} i
    * @returns {Boolean}
