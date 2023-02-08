@@ -1,9 +1,13 @@
+const fs = require("fs");
+const path = require("path");
 // eslint-disable-next-line
-const { makeClass } = require("../runtime");
+const { makeClass, resolveRequire } = require("../runtime");
+const { isError } = require("../utils");
 const { isList, List, list, cons } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
+const { loadModules } = require("./loader");
 const { isKeyword, isTruthy, isSelfQuoting } = require("./utils");
 /**
  * Evaluate an AST as code
@@ -117,6 +121,8 @@ const evalList = (ast, env) => {
       return evalClassDecl(ast, env);
     case Forms.Try:
       return evalTryCatch(ast, env);
+    case Forms.Import:
+      return evalImport(ast, env);
     default:
       return evalCall(ast, env);
   }
@@ -551,6 +557,32 @@ const evalTryCatch = (ast, env) => {
     scope.set(exn, e);
     return evaluate(catchExpr, scope);
   }
+};
+
+/**
+ * Evaluate an import expression
+ * @param {List} ast
+ * @param {Env} env
+ */
+const evalImport = (ast, env) => {
+  const [, mod, , as] = ast;
+  const name =
+    typeof mod === "symbol"
+      ? Symbol.keyFor(mod)
+      : path.basename(mod).split(".")[0];
+  const ext = typeof mod === "string" ? path.basename(mod).split(".")[1] : "";
+  const cwd = process.cwd();
+  const native = !isError(() =>
+    resolveRequire(name, { basePath: cwd, native: true })
+  );
+  const filePath = resolveRequire(name, {
+    basePath: cwd,
+    native,
+  });
+
+  loadModules({ name, path: filePath, env, as, native: ext === "js" });
+
+  return null;
 };
 
 exports.evaluate = evaluate;

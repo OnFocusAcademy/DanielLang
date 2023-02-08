@@ -17,15 +17,25 @@ const getModulePaths = (requires, nativeRequires) => {
   let paths = [];
 
   for (let req of requires) {
-    let path = resolveRequire(req);
-    nameMap[path] = req;
-    paths.push(path);
+    if (req.startsWith("//") || /^[a-zA-Z]:\\\\/.test(req)) {
+      // is already resolved
+      paths.push(req);
+    } else {
+      let path = resolveRequire(req);
+      nameMap[path] = req;
+      paths.push(path);
+    }
   }
 
   for (let req of nativeRequires) {
-    let path = resolveRequire(req, { native: true });
-    nameMap[req] = path;
-    paths.push(path);
+    if (req.startsWith("//") || /^[a-zA-Z]:\\\\/.test(req)) {
+      // is already resolved
+      paths.push(req);
+    } else {
+      let path = resolveRequire(req, { native: true });
+      nameMap[req] = path;
+      paths.push(path);
+    }
   }
 
   return paths;
@@ -140,7 +150,7 @@ const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
     if (open) {
       env.addMany(modules[dep]);
     } else if (as) {
-      env.set(Symbol.for(as), modules[dep]);
+      env.set(typeof as === "symbol" ? as : Symbol.for(as), modules[dep]);
     } else {
       env.set(Symbol.for(moduleTable[dep].name), modules[dep]);
     }

@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const { getPathFromFileURL } = require("./utils");
 
 /** Add __length__ property to Object constructor to make making classes work */
 // this won't work with all native constructors...
@@ -74,10 +75,23 @@ const makeFunction = (
  * @param {String} kwargs.file required if local module
  * @param {Boolean} kwargs.native
  */
-const resolveRequire = (rq, { file = "", native = false } = {}) => {
+const resolveRequire = (rq, { basePath = "", native = false } = {}) => {
+  if (rq.startsWith("//") || /^[a-zA-Z]:\\\\/.test(rq)) {
+    // is absolute path
+    if (fs.existsSync(rq)) {
+      return rq;
+    }
+  }
+
+  if (rq.startsWith("file:")) {
+    // is file URL
+    if (fs.existsSync(getPathFromFileURL(rq))) {
+      return getPathFromFileURL(rq);
+    }
+  }
+
   if (rq.startsWith(".")) {
     // local module (user-defined)
-    const basePath = path.dirname(file);
     const absPath = path.join(basePath, rq);
 
     if (fs.existsSync(`${absPath}.dan`)) {
