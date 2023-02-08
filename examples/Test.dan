@@ -1,0 +1,3 @@
+(module Test
+    (define value "hello")
+    (provide value))
