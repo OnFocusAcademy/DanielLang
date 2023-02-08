@@ -118,7 +118,6 @@ const define = (name, file, mod) => {
 /**
  * Evaluate the modules that have been queued up
  * @param {String[]} depsOrder
- * @param {Object} deps
  * @param {Env} env
  * @param {Object} [kwargs]
  * @param {Boolean} [kwargs.open=false]
