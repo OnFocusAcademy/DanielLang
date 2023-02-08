@@ -13,13 +13,13 @@ exports.run = (argv) => {
       if (fst === "-i") {
         const [, pathString] = argv;
         const code = readfile(
-          pathString.startsWith("//")
+          pathString.startsWith("/") || /^[a-zA-Z]:\\\\/.test(pathString)
             ? path.join(process.cwd(), pathString)
             : pathString
         );
 
         global.set(Symbol.for("argv"), argv);
-        const moduleName = `__${path.basename(pathString).split(".")[0]}__`;
+        const moduleName = `${path.basename(pathString).split(".")[0]}`;
         const moduleEnv = global.extend(moduleName);
 
         evaluate(read(code), moduleEnv);
