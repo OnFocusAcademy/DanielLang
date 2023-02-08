@@ -1,4 +1,3 @@
-const fs = require("fs");
 const path = require("path");
 // eslint-disable-next-line
 const { makeClass, resolveRequire } = require("../runtime");
@@ -570,7 +569,6 @@ const evalImport = (ast, env) => {
     typeof mod === "symbol"
       ? Symbol.keyFor(mod)
       : path.basename(mod).split(".")[0];
-  const ext = typeof mod === "string" ? path.basename(mod).split(".")[1] : "";
   const cwd = process.cwd();
   const native = !isError(() =>
     resolveRequire(name, { basePath: cwd, native: true })
