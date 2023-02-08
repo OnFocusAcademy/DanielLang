@@ -25,6 +25,10 @@ class Cons {
     return this.head;
   }
 
+  isCons() {
+    return true;
+  }
+
   /**
    * Returns the 2nd element in a cons pair
    */

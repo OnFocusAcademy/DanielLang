@@ -21,6 +21,10 @@ const print = (obj, quoteString = false) => {
     return printList(obj);
   }
 
+  if (obj.isCons && typeof obj.isCons === "function" && obj.isCons()) {
+    return obj.toString();
+  }
+
   if (obj instanceof Map) {
     return printMap(obj);
   }
@@ -49,7 +53,7 @@ const print = (obj, quoteString = false) => {
     return chalk.greenBright(String(obj));
   }
 
-  if (typeof obj === "object" && obj.toString().startsWith("[object")) {
+  if (typeof obj === "object") {
     return util.inspect(obj);
   }
 
