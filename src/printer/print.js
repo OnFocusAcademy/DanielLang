@@ -7,7 +7,7 @@ const { isKeyword } = require("../interpreter/utils");
  * @param {Any} obj
  * @returns {String}
  */
-const print = (obj, quoteString = false) => {
+const print = (obj, { quoteString = false, colors = true } = {}) => {
   // null or undefined
   if (obj == null) {
     return "nil";
@@ -42,15 +42,15 @@ const print = (obj, quoteString = false) => {
   }
 
   if (typeof obj === "symbol") {
-    return chalk.blueBright(Symbol.keyFor(obj));
+    return colors ? chalk.blueBright(Symbol.keyFor(obj)) : Symbol.keyFor(obj);
   }
 
   if (typeof obj === "number") {
-    return chalk.yellowBright(String(obj));
+    return colors ? chalk.yellowBright(String(obj)) : String(obj);
   }
 
   if (typeof obj === "boolean") {
-    return chalk.greenBright(String(obj));
+    return colors ? chalk.greenBright(String(obj)) : String(obj);
   }
 
   if (typeof obj === "object") {
