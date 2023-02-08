@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { read } = require("../reader/read");
 // eslint-disable-next-line
 const { resolveRequire, Exception, Module } = require("../runtime");
 // eslint-disable-next-line
@@ -157,13 +158,14 @@ const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
   }
 };
 
-const loadModules = ({
+exports.loadModules = ({
   name,
   path = "",
   env,
   open = false,
   as = "",
   native = false,
+  evaluate = () => {},
 } = {}) => {
   if (path === "") {
     if (fs.existsSync(resolveRequire(name, { native }))) {
@@ -182,7 +184,8 @@ const loadModules = ({
     if (path.endsWith(".js")) {
       mod = require(path);
     } else if (path.endsWith(".dan")) {
-      // evaluate Daniel module
+      const moduleFile = fs.readFileSync(path, "utf-8");
+      mod = evaluate(read(moduleFile), env);
     } else {
       throw new Exception(`A module must be either a .js or .dan file`);
     }
@@ -204,5 +207,3 @@ const loadModules = ({
 
   return modules;
 };
-
-exports.loadModules = loadModules;

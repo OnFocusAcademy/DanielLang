@@ -93,7 +93,6 @@ const resolveRequire = (rq, { basePath = "", native = false } = {}) => {
   if (rq.startsWith(".")) {
     // local module (user-defined)
     const absPath = path.join(basePath, rq);
-
     if (fs.existsSync(`${absPath}.dan`)) {
       // is in-language module
       return `${absPath}.dan`;

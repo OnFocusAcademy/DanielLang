@@ -1,13 +1,11 @@
-const path = require("path");
 // eslint-disable-next-line
-const { makeClass, resolveRequire, makeModule } = require("../runtime");
-const { isError } = require("../utils");
+const { makeClass } = require("../runtime");
 const { isList, List, list, cons } = require("../_internal/List");
 // eslint-disable-next-line
 const { Env } = require("./Env");
 const { Forms } = require("./forms");
-const { loadModules } = require("./loader");
 const { isKeyword, isTruthy, isSelfQuoting } = require("./utils");
+const { evalModule, evalImport } = require("./module");
 /**
  * Evaluate an AST as code
  * @param {import("../reader/read").AST} ast
@@ -121,9 +119,9 @@ const evalList = (ast, env) => {
     case Forms.Try:
       return evalTryCatch(ast, env);
     case Forms.Import:
-      return evalImport(ast, env);
+      return evalImport(ast, env, evaluate);
     case Forms.Module:
-      return evalModule(ast, env);
+      return evalModule(ast, env, evaluate);
     default:
       return evalCall(ast, env);
   }
@@ -558,54 +556,6 @@ const evalTryCatch = (ast, env) => {
     scope.set(exn, e);
     return evaluate(catchExpr, scope);
   }
-};
-
-/**
- * Evaluate an import expression
- * @param {List} ast
- * @param {Env} env
- */
-const evalImport = (ast, env) => {
-  const [, mod, , as] = ast;
-  const name =
-    typeof mod === "symbol"
-      ? Symbol.keyFor(mod)
-      : path.basename(mod).split(".")[0];
-  const cwd = process.cwd();
-  const native = !isError(() =>
-    resolveRequire(name, { basePath: cwd, native: true })
-  );
-  const filePath = resolveRequire(name, {
-    basePath: cwd,
-    native,
-  });
-
-  loadModules({ name, path: filePath, env, as, native });
-};
-
-/**
- * Evaluates a Daniel module
- * @param {List} ast
- * @param {Env} env
- */
-const evalModule = (ast, env) => {
-  const [, name, ...body] = ast;
-  const moduleEnv = env.extend(Symbol.keyFor(name));
-  let provides = {};
-
-  for (let expr of body) {
-    let fst = isList(expr) && expr.first();
-    if (fst === Symbol.for("provide")) {
-      // will have exactly 2 nodes, both symbols, 2nd is variable name for value to provide
-      let sym = expr.get(1);
-      provides[Symbol.keyFor(sym)] = evaluate(sym, moduleEnv);
-    } else {
-      // is definition or side effect
-      evaluate(expr, moduleEnv);
-    }
-  }
-
-  return makeModule(Symbol.keyFor(name), () => provides);
 };
 
 exports.evaluate = evaluate;
