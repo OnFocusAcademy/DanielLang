@@ -24,7 +24,7 @@ const getModulePaths = (requires, nativeRequires) => {
 
   for (let req of nativeRequires) {
     let path = resolveRequire(req, { native: true });
-    nameMap[path] = req;
+    nameMap[req] = path;
     paths.push(path);
   }
 
@@ -55,7 +55,7 @@ const getLoadOrder = (deps) => {
     }
 
     if (node in visited) {
-      // it's alreaady been loaded, so we're good
+      // it's already been loaded, so we're good
       return;
     }
 
@@ -68,7 +68,10 @@ const getLoadOrder = (deps) => {
     }
 
     // now visit its children recursively
-    for (let dep of moduleTable[node].deps) {
+    for (let dep of getModulePaths(
+      moduleTable[node].requires,
+      moduleTable[node].nativeRequires
+    )) {
       visitNode(dep);
     }
 
@@ -86,7 +89,7 @@ const getLoadOrder = (deps) => {
 
   // as long as there are keys in toVisit, we need to keep visiting
   while (Object.keys(toVisit).length > 0) {
-    let nextNode = Object.keys()(toVisit)[0];
+    let nextNode = Object.keys(toVisit)[0];
     visitNode(nextNode);
   }
 
@@ -98,10 +101,10 @@ const getLoadOrder = (deps) => {
  * Define a module in the module table
  * @param {String} name
  * @param {String} file
- * @param {Module} module
+ * @param {Module} mod
  */
-const define = (name, file, module) => {
-  if (typeof module !== "function") {
+const define = (name, file, mod) => {
+  if (typeof mod?.create !== "function") {
     throw new Exception(`Module constructor for ${name} is not a function`);
   }
 
@@ -109,7 +112,7 @@ const define = (name, file, module) => {
     throw new Exception(`Module ${name} already queued`);
   }
 
-  moduleTable[file] = module;
+  moduleTable[file] = mod;
 };
 
 /**
@@ -121,17 +124,10 @@ const define = (name, file, module) => {
  * @param {Boolean} [kwargs.open=false]
  * @param {String} [kwargs.as=""]
  */
-const evaluateModules = (
-  depsOrder,
-  deps,
-  env,
-  { open = false, as = "" } = {}
-) => {
+const evaluateModules = (depsOrder, env, { open = false, as = "" } = {}) => {
   for (let dep of depsOrder) {
     let mods = [];
-    let ds = getModulePaths(deps.requires, deps.nativeRequires);
-
-    for (let d of ds) {
+    for (let d of depsOrder) {
       // deps are file paths for already evaluated modules so
       // it's safe to use d as the key to get the module info
       // to populate dependencies for the module being evaluated
@@ -145,17 +141,24 @@ const evaluateModules = (
     if (open) {
       env.addMany(modules[dep]);
     } else if (as) {
-      env.define(Symbol.for(as), modules[dep]);
+      env.set(Symbol.for(as), modules[dep]);
     } else {
-      env.define(Symbol.for(nameMap[dep]), modules[dep]);
+      env.set(Symbol.for(moduleTable[dep].name), modules[dep]);
     }
   }
 };
 
-const loadModules = ({ name, path = "", env, open = false, as = "" } = {}) => {
+const loadModules = ({
+  name,
+  path = "",
+  env,
+  open = false,
+  as = "",
+  native = false,
+} = {}) => {
   if (path === "") {
-    if (fs.existsSync(resolveRequire(name))) {
-      path = resolveRequire(name);
+    if (fs.existsSync(resolveRequire(name, { native }))) {
+      path = resolveRequire(name, { native });
     } else {
       throw new Exception(
         `Could not resolve path to module ${name ?? "unknown module"}`
@@ -163,23 +166,22 @@ const loadModules = ({ name, path = "", env, open = false, as = "" } = {}) => {
     }
   }
 
-  nameMap[path] = name;
+  nameMap[name] = path;
 
+  let mod;
   const defineModule = (path) => {
-    let module;
-
     if (path.endsWith(".js")) {
-      module = require(path);
+      mod = require(path);
     } else if (path.endsWith(".dan")) {
       // evaluate Daniel module
     } else {
       throw new Exception(`A module must be either a .js or .dan file`);
     }
 
-    const rootDeps = getModulePaths(module.requires, module.nativeRequires);
+    const rootDeps = getModulePaths(mod.requires, mod.nativeRequires);
 
     if (!(path in moduleTable)) {
-      define(module.name, path, module);
+      define(mod.name, path, mod);
     }
 
     for (let dep of rootDeps) {
@@ -189,15 +191,7 @@ const loadModules = ({ name, path = "", env, open = false, as = "" } = {}) => {
 
   defineModule(path);
   const loadOrder = getLoadOrder([path]);
-  evaluateModules(
-    loadOrder,
-    {
-      requires: module.requires,
-      nativeRequires: module.nativeRequires,
-    },
-    env,
-    { open, as }
-  );
+  evaluateModules(loadOrder, env, { open, as });
 
   return modules;
 };

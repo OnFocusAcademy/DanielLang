@@ -92,7 +92,7 @@ const resolveRequire = (rq, { file = "", native = false } = {}) => {
     const filePath = path.join(
       __dirname,
       "../lib",
-      native ? `${rq}.dan` : `js/${rq}.js`
+      native ? `js/${rq}.js` : `${rq}.dan`
     );
 
     if (fs.existsSync(filePath)) {
