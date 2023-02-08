@@ -13,9 +13,10 @@ exports.run = (argv) => {
       if (fst === "-i") {
         const [, pathString] = argv;
         const code = readfile(
+          // is absolute path
           pathString.startsWith("/") || /^[a-zA-Z]:\\\\/.test(pathString)
-            ? path.join(process.cwd(), pathString)
-            : pathString
+            ? pathString
+            : path.join(process.cwd(), pathString)
         );
 
         global.set(Symbol.for("argv"), argv);
@@ -31,9 +32,10 @@ exports.run = (argv) => {
       }
       const pathString = fst;
       const code = readfile(
-        pathString.startsWith("//")
-          ? path.join(process.cwd(), pathString)
-          : pathString
+        // is absolute path
+        pathString.startsWith("//") || /^[a-zA-Z]:\\\\/.test(pathString)
+          ? pathString
+          : path.join(process.cwd(), pathString)
       );
       global.set(Symbol.for("argv"), argv);
       let env = global.extend("__main__");
