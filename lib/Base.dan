@@ -1,0 +1,7 @@
+(module Base
+    (define (inc x) (+ x 1))
+    (define (dec x) (- x 1))
+    (defmacro (unless pred a b) `(if ~pred ~b ~a))
+    (provide inc)
+    (provide dec)
+    (provide unless))
