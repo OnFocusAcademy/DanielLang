@@ -67,6 +67,20 @@ exports.Env = class Env {
   }
 
   /**
+   * See if a name is bound anywhere up the scope chain
+   * @param {Symbol} name
+   * @returns {Boolean}
+   */
+  exists(name) {
+    try {
+      this.lookup(name);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /**
    * Extend the current Environment by defining a child
    * @param {String} name
    * @returns {Env}

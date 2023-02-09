@@ -165,7 +165,7 @@ exports.loadModules = ({
   open = false,
   as = "",
   native = false,
-  evaluate = () => {},
+  evaluate,
 } = {}) => {
   if (path === "") {
     if (fs.existsSync(resolveRequire(name, { native }))) {

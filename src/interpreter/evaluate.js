@@ -51,7 +51,7 @@ const isMacroCall = (ast, env) => {
     const [first] = ast;
 
     if (typeof first === "symbol" && !isKeyword(first)) {
-      return env.has(first) && env.get(first)?.isMacro === true;
+      return env.exists(first) && env.get(first)?.isMacro === true;
     }
   }
 
@@ -77,6 +77,7 @@ const macroexpand = (ast, env) => {
 /**
  * Evaluate a list form
  * @param {List} ast
+ * @param {Env} env
  */
 const evalList = (ast, env) => {
   ast = macroexpand(ast, env);
@@ -312,6 +313,7 @@ const evalFuncDef = (ast, env, isMacro = false) => {
   const fn = makeLambda(list(args, body), env, Symbol.keyFor(name), isMacro);
 
   env.define(name, fn);
+  return fn;
 };
 
 /**
