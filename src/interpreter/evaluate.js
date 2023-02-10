@@ -344,7 +344,6 @@ const evalFuncDef = (ast, env, isMacro = false, isAsync = false) => {
   );
 
   env.define(name, fn);
-  return fn;
 };
 
 /**
