@@ -19,4 +19,5 @@ exports.Forms = {
   Try: "try",
   Import: "import",
   Module: "module",
+  Async: "async",
 };

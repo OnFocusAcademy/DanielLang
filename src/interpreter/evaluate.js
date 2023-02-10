@@ -123,6 +123,8 @@ const evalList = (ast, env) => {
       return evalImport(ast, env, evaluate);
     case Forms.Module:
       return evalModule(ast, env, evaluate);
+    case Forms.Async:
+      return evalFuncDef(ast, env, false, true);
     default:
       return evalCall(ast, env);
   }
@@ -261,30 +263,23 @@ const evalLambda = (ast, env) => {
  * @param {String} [name=lambda]
  * @returns {Lambda}
  */
-const makeLambda = (ast, env, name = "lambda", isMacro = false) => {
+const makeLambda = (
+  ast,
+  env,
+  name = "lambda",
+  isMacro = false,
+  isAsync = false
+) => {
   const [args, ...body] = ast;
   const blockBody = list(Symbol.for("do"), ...body);
   const restIdx = args.findIndex((arg) => arg === "&");
   const variadic = restIdx > -1;
   const params = args.filter((arg) => arg !== "&");
   const length = variadic ? params.length - 1 : params.length;
-  const danielFn = (...args) => {
-    /**
-     * @type {Env}
-     */
-    const scope = env.extend(name);
-    // we're going to sloppily allow extra arguments to any function
-    // because JS does and it's just easier that way
-    params.forEach((param, i) => {
-      if (variadic && i === length) {
-        scope.define(param, args.slice(i));
-      } else {
-        scope.define(param, args[i]);
-      }
-    });
-
-    return evaluate(blockBody, scope);
-  };
+  const danielFn = isAsync
+    ? async (...args) =>
+        evalLambdaBody(params, args, blockBody, env, variadic, name)
+    : (...args) => evalLambdaBody(params, args, blockBody, env, variadic, name);
 
   danielFn.daniel = true;
   danielFn.__name__ = name;
@@ -294,12 +289,30 @@ const makeLambda = (ast, env, name = "lambda", isMacro = false) => {
   return danielFn;
 };
 
+const evalLambdaBody = (params, args, blockBody, env, variadic, name) => {
+  /**
+   * @type {Env}
+   */
+  const scope = env.extend(name);
+  // we're going to sloppily allow extra arguments to any function
+  // because JS does and it's just easier that way
+  params.forEach((param, i) => {
+    if (variadic && i === length) {
+      scope.define(param, args.slice(i));
+    } else {
+      scope.define(param, args[i]);
+    }
+  });
+
+  return evaluate(blockBody, scope);
+};
+
 /**
  * Evaluates a function definition using define
  * @param {List} ast
  * @param {Env} env
  */
-const evalFuncDef = (ast, env, isMacro = false) => {
+const evalFuncDef = (ast, env, isMacro = false, isAsync = false) => {
   const [, header, body] = ast;
   const name = header.first();
   const args = header.tail();
@@ -310,7 +323,13 @@ const evalFuncDef = (ast, env, isMacro = false) => {
     );
   }
 
-  const fn = makeLambda(list(args, body), env, Symbol.keyFor(name), isMacro);
+  const fn = makeLambda(
+    list(args, body),
+    env,
+    Symbol.keyFor(name),
+    isMacro,
+    isAsync
+  );
 
   env.define(name, fn);
   return fn;
