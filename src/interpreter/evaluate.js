@@ -189,7 +189,7 @@ const evalCall = (ast, env) => {
 
   if (typeof fn !== "function") {
     throw new Error(
-      1`Call expression callee must be a function; ${typeof fn} given`
+      `Call expression callee must be a function; ${typeof fn} given`
     );
   }
 
