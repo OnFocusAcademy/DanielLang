@@ -175,6 +175,13 @@ const evalCall = (ast, env) => {
   // allow keyword key access to maps and objects as if keyword was a function
   if (isKeyword(fn)) {
     const obj = evaluate(args[0], env);
+
+    if (fn === Symbol.for(":await")) {
+      return obj.then && typeof obj.then === "function"
+        ? obj.then(evaluate(args[0], env))
+        : obj;
+    }
+
     return obj instanceof Map ? obj.get(fn) : obj[fn];
   }
 
@@ -182,7 +189,7 @@ const evalCall = (ast, env) => {
 
   if (typeof fn !== "function") {
     throw new Error(
-      `Call expression callee must be a function; ${typeof fn} given`
+      1`Call expression callee must be a function; ${typeof fn} given`
     );
   }
 
@@ -285,6 +292,7 @@ const makeLambda = (
   danielFn.__name__ = name;
   danielFn.__length__ = length;
   danielFn.isMacro = isMacro;
+  danielFn.isAsync = isAsync;
 
   return danielFn;
 };
