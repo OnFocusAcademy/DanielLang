@@ -178,7 +178,7 @@ const evalCall = (ast, env) => {
 
     if (fn === Symbol.for(":await")) {
       return obj.then && typeof obj.then === "function"
-        ? obj.then(evaluate(args[0], env))
+        ? awaitCall(args[0], env)
         : obj;
     }
 
@@ -196,6 +196,10 @@ const evalCall = (ast, env) => {
   args = args.map((arg) => evaluate(arg, env));
 
   return fn(...args);
+};
+
+const awaitCall = async (ast, env) => {
+  return await evaluate(ast, env);
 };
 
 /**
