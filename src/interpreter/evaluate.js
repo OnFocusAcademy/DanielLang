@@ -289,7 +289,7 @@ const makeLambda = (
   const length = variadic ? params.length - 1 : params.length;
   const danielFn = isAsync
     ? async (...args) =>
-        evalLambdaBody(params, args, blockBody, env, variadic, name)
+        await evalLambdaBody(params, args, blockBody, env, variadic, name)
     : (...args) => evalLambdaBody(params, args, blockBody, env, variadic, name);
 
   danielFn.daniel = true;
