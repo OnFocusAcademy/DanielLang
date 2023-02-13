@@ -298,11 +298,19 @@ Handle possible exceptions with `try`/`catch` blocks:
 You can create modules with the `module` form. Note that a module must have the same name as the file it's contained in (case sensitive).
 
 ```clojure
-(module
+(module Example
     (define (inc x)
         (+ 1 x))
 
     (provide inc))
+```
+
+Then `import` the module and use it as a namespace.
+
+```clojure
+(import Example)
+
+(Example.inc 5) ;=> 6
 ```
 
 ## Async/Await
