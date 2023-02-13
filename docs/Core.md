@@ -343,7 +343,7 @@ Usage: `(input prompt)`
 
 #### Readfile
 
-Reads a file into memory. Defaults to a text file with UTF-8 encoding. Options is an object that takes the same properties as the optional argument to Node.js `fs.writeFileSync` ([https://nodejs.org/api/fs.html#fsreadfilesyncpath-options](link)).
+Reads a file into memory. Defaults to a text file with UTF-8 encoding. Options is an object that takes the same properties as the optional argument to Node.js `fs.writeFileSync` ([link](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options)).
 
 Usage: `(readfile filename [options])`
 
@@ -353,7 +353,7 @@ Usage: `(readfile filename [options])`
 
 #### Writefile
 
-Writes a file to disk. Defaults to text data with UTF-8 encoding. Options is an object that takes the same properties as the optional argument to Node.js `fs.writeFileSync` ([https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options](link)).
+Writes a file to disk. Defaults to text data with UTF-8 encoding. Options is an object that takes the same properties as the optional argument to Node.js `fs.writeFileSync` ([link](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options)).
 
 Usage: `(writefile path data [options])`
 
