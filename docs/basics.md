@@ -42,6 +42,8 @@ You can separate values with commas if you think it makes it easier to read:
 [1, 2, 3]
 ```
 
+Note that Lists, Maps, and Objects are all reference types. All others are value types.
+
 ## Function Calls
 
 A parenthesized list is either a function call or a special form. For a function call, the first item of the list must be a valid function. The remaining list items are its arguments.
