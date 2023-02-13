@@ -292,3 +292,30 @@ Handle possible exceptions with `try`/`catch` blocks:
     (catch exn
         (println exn.message)))
 ```
+
+## Modules
+
+You can create modules with the `module` form. Note that a module must have the same name as the file it's contained in (case sensitive).
+
+```clojure
+(module
+    (define (inc x)
+        (+ 1 x))
+
+    (provide inc))
+```
+
+## Async/Await
+
+Create async functions with the `async` form. These functions will always return a promise.
+
+```clojure
+(async (promise-fn x) x)
+```
+
+Use the `:await` keyword to work with a promise value as if it were a regular value:
+
+```clojure
+(async (make-request url)
+    (:await (get url)))
+```
