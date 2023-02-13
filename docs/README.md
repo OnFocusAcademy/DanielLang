@@ -8,6 +8,6 @@ Daniel is an object oriented programming language with all the features of a fir
 
 ## Standard Library
 
-- [Core moddule](./Core.md)
+- [Core module](./Core.md)
 - String module
 - Base module (defined in Daniel itself)
