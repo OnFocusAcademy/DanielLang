@@ -47,7 +47,7 @@ You can separate values with commas if you think it makes it easier to read:
 A parenthesized list is either a function call or a special form. For a function call, the first item of the list must be a valid function. The remaining list items are its arguments.
 
 ```clojure
-(println "Hello, ", name)
+(println "Hello, " name)
 
 Special forms are demonstrated below.
 ```
