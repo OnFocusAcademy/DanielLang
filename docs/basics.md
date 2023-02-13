@@ -324,6 +324,6 @@ Create async functions with the `async` form. These functions will always return
 Use the `:await` keyword to work with a promise value as if it were a regular value:
 
 ```clojure
-(async (make-request url)
-    (:await (get url)))
+(async (fetch url)
+    (:await (http-get url)))
 ```
