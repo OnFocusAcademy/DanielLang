@@ -194,6 +194,8 @@ While you could theoretically define methods with the lambda form while creating
         (set-field! "energy" self (- self.energy speed))))
 ```
 
+Note that, as in Python, you must explicitly pass the `self` parameter to methods.
+
 Create a class instance with the `new` form:
 
 ```clojure
