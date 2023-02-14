@@ -1,3 +1,4 @@
 (module Test
+    ; test module to make sure importing modules works
     (define value "hello")
     (provide value))
