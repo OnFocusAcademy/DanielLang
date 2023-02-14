@@ -222,7 +222,7 @@ When creating an instance, the `new` form passes the superclass constructor argu
 (new Trout 20 false)
 ```
 
-Daniel uses JavaScript's prototypal delegation behind the scenes. The superclass itself is the prototype for the subclass, and Superclass.prototype is the prototype for Subclass.prototype. That means both static and instance methods are inherited, and superclass methods can be accessed using the `super` form.
+Daniel uses JavaScript's prototypal delegation behind the scenes. The superclass itself is the prototype for the subclass, and `Superclass.prototype` is the prototype for `Subclass.prototype`. That means both static and instance methods are inherited, and superclass methods can be accessed using the `super` form.
 
 ## Quoting and Macros
 
