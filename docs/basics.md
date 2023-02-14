@@ -50,9 +50,9 @@ A parenthesized list is either a function call or a special form. For a function
 
 ```clojure
 (println "Hello, " name)
+```
 
 Special forms are demonstrated below.
-```
 
 ## Variable and Function Definitions
 
