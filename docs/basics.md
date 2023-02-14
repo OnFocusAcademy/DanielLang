@@ -278,6 +278,10 @@ Use the `splice-unquote` form to splice a list into a quasiquote expression:
 
 ```clojure
 (define l [3 4 5 6])
+(define l1 `(1 2 (splice-unquote l)))
+
+; or use the shorthand form
+
 (define l2 `(1 2 ~@l))  ;=> (1 2 3 4 5 6)
 ```
 
