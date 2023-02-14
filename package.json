@@ -1,6 +1,12 @@
 {
   "name": "@onfocusacademy/daniellang",
   "description": "A Lisp-like language with macros for learning about programming languages and interpreters.",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "daniel": "bin/daniel"
+  },
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {
