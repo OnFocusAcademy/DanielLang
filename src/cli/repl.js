@@ -41,6 +41,7 @@ const repl = (globalEnv) => {
     input += query;
 
     if (input === "") {
+      process.exit();
       break;
     }
 
