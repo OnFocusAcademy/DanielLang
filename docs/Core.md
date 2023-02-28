@@ -297,7 +297,7 @@ Usage: `(copy my-map)`
 
 #### Range
 
-Create a range of numbers from `start` to `end` by `step`. Works similarly to Python's `range` function. Can call with 1, 2, or 3 arguments. Note that `end` is not inclusive, so it will stop iterating ` `step`before`end`.
+Create a range of numbers from `start` to `end` by `step`. Works similarly to Python's `range` function. Can call with 1, 2, or 3 arguments. Note that `end` is not inclusive, so it will stop iterating at the `step` before `end`.
 
 Usage: `(range start [stop [end]])`
 
