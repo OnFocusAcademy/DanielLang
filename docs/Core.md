@@ -889,10 +889,20 @@ Usage: `(object my-map)`
 
 Read takes a string of Daniel code and outputs an Abstract Syntax Tree as a list of Daniel values
 
+Usage: `(read string-of-code)`
+
 ```clojure
 (read "(+ 1 2)") ;=> ('+ 1 2)
 ```
 
 #### Eval
 
+Usage: `(eval ast)`
+
 Eval takes an AST and evaluates it. Note that this means all quoted symbols will be looked up in the current environment.
+
+```clojure
+(define x 10)
+(define add-expr '(+ x 1))
+(eval add-expr) ;=> 11
+```
