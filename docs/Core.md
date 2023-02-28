@@ -793,7 +793,7 @@ Usage: `(pipe f g h)`
 
 ### Functions that Work with Native JavaScript
 
-#### Require-js
+#### js-require
 
 Require a CommonJS module.
 
@@ -803,7 +803,7 @@ Usage: `(js-require module)`
 (define fs (js-require "fs")) ;=> namespaces the Node.js fs module to fs
 ```
 
-#### Eval-js
+#### js-eval
 
 Evaluate a string as JavaScript code. Subject to all the same pitfalls as native JavaScript `eval`.
 
