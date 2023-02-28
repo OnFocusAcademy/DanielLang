@@ -883,6 +883,20 @@ Usage: `(object my-map)`
 (object {:name "Jason" :age 42}) ;=> Object {:name "Jason" :age 42}
 ```
 
+### Additional Types
+
+#### Promise
+
+The `Promise` constructor from JavaScript.
+
+Usage: `(Promise resolver)`
+
+```clojure
+(define (resolves-to-arg arg)
+    (Promise
+        (resolve x)))
+```
+
 ### Functions that Work with Daniel Code
 
 #### Read
