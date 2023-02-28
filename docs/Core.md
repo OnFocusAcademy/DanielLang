@@ -183,7 +183,7 @@ Usage: `(assoc my-map [(cons :key1 value1) ...])`
 
 #### Dissoc
 
-Takes a map and a list of keys. Deletes the specified keys from the map. Does not moddify the original map.
+Takes a map and a list of keys. Deletes the specified keys from the map. Does not modify the original map.
 
 Usage: `(dissoc map [:key1 ...])`
 
