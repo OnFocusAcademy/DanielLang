@@ -13,7 +13,13 @@ Daniel is named after two people:
 
 ## Installation
 
-Currently there is no NPM package for Daniel. You'll need to clone the repository and then if you want `daniel` available as a global command you'll need to run `npm link` in the repo root directory.
+To install the current release version of Daniel, you must have Node.js installed with NPM.
+
+Installation:
+
+```shell
+npm install -g @onfocusacademy/daniel
+```
 
 ## Usage
 
