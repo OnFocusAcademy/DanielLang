@@ -148,7 +148,7 @@ Usage: `(reduce reducer initial-value list)`
 (reduce (lambda (sum n) (+ sum n)) 0 nums) ;=> 15
 ```
 
-The reducer can receive up to the same 3 arguments as `map`.
+The reducer can receive up to 4 arguments: the accumulated value, the current list value, the current list index, and the list itself.
 
 #### Foldl
 
@@ -164,7 +164,7 @@ Usage: `(foldr reducer init list)`
 (foldr (lambda (sum n) (+ sum n)) 0 [1 2 3 4 5]) ;=> 15
 ```
 
-The reducer can receive up to the same 3 arguments as `map`.
+The reducer can receive up to the same 4 arguments as `reduce`.
 
 ### Map Functions
 
