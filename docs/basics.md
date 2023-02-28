@@ -156,6 +156,15 @@ There is also a list comprehension form:
 ; squares == (1 4 9 ...)
 ```
 
+## Map Keyword Access
+
+You can use a keyword key for a map as if it were an accessor function for that map value:
+
+```clojure
+(define jason {:name "Jason", age: 42})
+(:name jason) ;=> "Jason"
+```
+
 ## Objects and Classes
 
 You can create literal objects by giving a map to the `object` function:
