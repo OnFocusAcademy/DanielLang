@@ -252,7 +252,7 @@ These functions work with both lists and maps.
 
 #### Get
 
-Gets the map value at `key` or the list item at index `key`.
+Gets the map value at `key` or the list item at index `key`. Returns `nil` if the key or index does not exist.
 
 Usage: `(get :name map)`
 
