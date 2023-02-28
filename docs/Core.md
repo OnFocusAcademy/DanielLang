@@ -76,7 +76,7 @@ Alias for `tail`, included for historical reasons.
 
 Returns the last item in a list or the 2nd item in a pair.
 
-Usage: `(tail pair-or-list)`
+Usage: `(last pair-or-list)`
 
 ```clojure
 (last (cons 1 2)) ;=> 2
