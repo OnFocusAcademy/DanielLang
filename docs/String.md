@@ -124,3 +124,14 @@ Usage: `(String.chars str)`
 ```clojure
 (String.chars "😀😁😂") ;=> (😀 😁 😂)
 ```
+
+#### Join
+
+Joins a list's contents (presumably strings) into a single string
+
+Usage: `(String.join list [separator=""])`
+
+```clojure
+(define names ["Jason", "Gretchen", "Daniel"])
+(String.join(names, " and ")) ;=> "Jason and Gretchen and Daniel"
+```
