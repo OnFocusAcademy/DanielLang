@@ -894,7 +894,7 @@ Usage: `(Promise resolver)`
 ```clojure
 (define (resolves-to-arg arg)
     (Promise
-        (resolve x)))
+        (resolve arg)))
 ```
 
 ### Functions that Work with Daniel Code
