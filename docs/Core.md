@@ -390,7 +390,7 @@ Converts a string value to a number. Returns `NaN` if the string is not a valid 
 Usage: `(number string-value)`
 
 ```clojure
-(define pi-num "3.14159") ;=> 3.14159
+(define pi-num (number "3.14159")) ;=> 3.14159
 ```
 
 #### Boolean
