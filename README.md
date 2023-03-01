@@ -27,6 +27,8 @@ npm install -g @onfocusacademy/daniel
 - `daniel -i <filename>`: start a REPL session with the definitions from `filename` loaded. Definitions will be available as Filename.definition, just as if it were a module.
 - `daniel <filename>`: Evaluate the code in `filename`.
 
+Note that the CLI assumes you are running the interpreter from the same directory as the entry point to your program.
+
 ## Documentation
 
 [Daniel Language documentation](./docs/README.md)
