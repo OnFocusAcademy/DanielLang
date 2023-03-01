@@ -117,7 +117,7 @@ Usage: `(String.includes search str)`
 
 #### Chars
 
-Splits a string up into a list of its characters (Unicode scalars).
+Splits a string up into a list of its characters (Unicode scalars, which can be represented as individual code points).
 
 Usage: `(String.chars str)`
 
