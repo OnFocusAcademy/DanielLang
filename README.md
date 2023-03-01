@@ -32,3 +32,15 @@ Note that the CLI assumes you are running the interpreter from the same director
 ## Documentation
 
 [Daniel Language documentation](./docs/README.md)
+
+## Contributing
+
+In general, we follow the "fork and pull" GitHub workflow.
+
+- Fork the repo on GitHub
+- Commit changes to a branch in your fork, with descriptive comments
+- Make a pull request upstream with your changes
+
+Be sure you've merged the latest changes from upstream before making your pull request.
+
+Please make sure to only submit code you have the legal ability to claim as your own, and ensure all contributed code can be distributed under the MIT License.
