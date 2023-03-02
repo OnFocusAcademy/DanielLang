@@ -214,7 +214,7 @@ const evalDefine = (ast, env) => {
     return evalFuncDef(ast, env);
   }
 
-  if (typeof name !== "symbol") {
+  if (typeof name !== "symbol" || isKeyword(name)) {
     throw new Error(
       `Variable definition must use a valid symbol; ${typeof name} given`
     );
@@ -231,7 +231,7 @@ const evalDefine = (ast, env) => {
 const evalSet = (ast, env) => {
   const [, name, value] = ast;
 
-  if (typeof name !== "symbol") {
+  if (typeof name !== "symbol" || isKeyword(name)) {
     throw new Error(
       `Variable name to set must be a valid symbol; ${typeof name} given`
     );
